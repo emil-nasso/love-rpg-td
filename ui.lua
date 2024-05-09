@@ -14,6 +14,7 @@ Ui = {
         boldMedium = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 16),
     },
     debugMessages = {},
+    showDebug = true,
 }
 Ui.__index = Ui
 
@@ -45,13 +46,20 @@ function Ui:keyPressed(key)
         )
     end
 
+    if key == "h" then
+        self.showDebug = not self.showDebug
+    end
+
     if key == "escape" or key == "q" then
         love.event.quit()
     end
 end
 
 function Ui:draw(offsetX, offsetY)
-    self:drawDebug(offsetX, offsetY)
+    if (self.showDebug) then
+        self:drawDebug(offsetX, offsetY)
+        self:drawPhysics(offsetX, offsetY)
+    end
     self:drawPlayerBar(10, love.graphics.getHeight() - 75, Player.health, "Health", Ui.colors.red)
     self:drawPlayerBar(10, love.graphics.getHeight() - 50, Player.health, "Mana", Ui.colors.blue)
     self:drawPlayerBar(10, love.graphics.getHeight() - 25, Player.stamina, "Stamina", Ui.colors.yellow)

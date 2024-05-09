@@ -18,7 +18,8 @@ Player = {
         body = nil,
         shape = nil,
         fixture = nil
-    }
+    },
+    shootingTimerHandle = nil,
 }
 Player.__index = Player
 
@@ -46,18 +47,39 @@ function Player:load()
     self.physics.fixture:setUserData("player")
 end
 
+function Player:startShooting()
+    self.shootingTimerHandle = Timer.every(0.25, function()
+        self:shoot()
+    end)
+end
+
+function Player:stopShooting()
+    Timer.cancel(self.shootingTimerHandle)
+end
+
 function Player:shoot()
     -- TODO: Första skottet är supersnabbt, av någon anledning
     local startX = self.x + (self.viewingDirection.x * 20)
     local startY = self.y + (self.viewingDirection.y * 20)
-    local projectile = love.physics.newBody(World, startX, startY, "dynamic")
+    local body = love.physics.newBody(World, startX, startY, "dynamic")
     local shape = love.physics.newCircleShape(5)
-    local fixture = love.physics.newFixture(projectile, shape, 10)
+    local fixture = love.physics.newFixture(body, shape, 10)
 
-    projectile:applyForce(self.viewingDirection.x * 15000, self.viewingDirection.y * 15000)
+    body:setLinearVelocity(self.viewingDirection.x * 500, self.viewingDirection.y * 500)
     fixture:setUserData("projectile")
 
-    table.insert(self.projectiles, projectile)
+    table.insert(self.projectiles, fixture)
+end
+
+function Player:removeProjectile(projectile)
+    Ui:addDebugMessage("Removing projectile")
+    projectile:destroy()
+    for i, value in ipairs(Player.projectiles) do
+        if value == projectile then
+            table.remove(Player.projectiles, i)
+            break
+        end
+    end
 end
 
 function Player:update(dt)
@@ -129,6 +151,14 @@ function Player:update(dt)
             Player.anim = Player.animations.down
         elseif (self.movingDirection.y == -1) then
             Player.anim = Player.animations.up
+        end
+    end
+
+    for index, projectile in ipairs(self.projectiles) do
+        local distance = love.physics.getDistance(self.physics.fixture, projectile)
+
+        if (distance > 500) then
+            self:removeProjectile(projectile)
         end
     end
 end
