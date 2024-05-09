@@ -9,8 +9,8 @@ return {
   height = 30,
   tilewidth = 32,
   tileheight = 32,
-  nextlayerid = 4,
-  nextobjectid = 5,
+  nextlayerid = 5,
+  nextobjectid = 16,
   properties = {},
   tilesets = {
     {
@@ -95,6 +95,21 @@ return {
       }
     },
     {
+      type = "objectgroup",
+      draworder = "topdown",
+      id = 3,
+      name = "Sprites",
+      class = "",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
+      properties = {},
+      objects = {}
+    },
+    {
       type = "tilelayer",
       x = 0,
       y = 0,
@@ -147,8 +162,8 @@ return {
     {
       type = "objectgroup",
       draworder = "topdown",
-      id = 3,
-      name = "Sprites",
+      id = 4,
+      name = "Collision",
       class = "",
       visible = true,
       opacity = 1,
@@ -159,19 +174,95 @@ return {
       properties = {},
       objects = {
         {
-          id = 1,
-          name = "Player",
+          id = 9,
+          name = "",
           type = "",
           shape = "rectangle",
-          x = 320,
-          y = 320,
-          width = 32,
-          height = 32,
+          x = 468.798,
+          y = 348.671,
+          width = 50.9009,
+          height = 30.0316,
           rotation = 0,
           visible = true,
-          properties = {
-            ["collidable"] = true
-          }
+          properties = {}
+        },
+        {
+          id = 10,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 243.816,
+          y = 512.064,
+          width = 53.955,
+          height = 26.9775,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 11,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 436.221,
+          y = 670.874,
+          width = 51.919,
+          height = 24.9415,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 12,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 691.235,
+          y = 800.672,
+          width = 54.973,
+          height = 26.9775,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 13,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 148.122,
+          y = 767.586,
+          width = 52.428,
+          height = 26.9775,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 14,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 148.122,
+          y = 223.455,
+          width = 51.919,
+          height = 26.9775,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 15,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 788.965,
+          y = 288.099,
+          width = 50.9009,
+          height = 26.4685,
+          rotation = 0,
+          visible = true,
+          properties = {}
         }
       }
     }

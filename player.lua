@@ -4,7 +4,7 @@ local vector = require 'libraries/hump/vector'
 Player = {
     x = 100,
     y = 100,
-    speed = 500,
+    speed = 250,
     stamina = 100,
     staminaDrain = 50,
     staminaRecovery = 25,
@@ -12,6 +12,11 @@ Player = {
     mana = 100,
     viewingAngle = 0,
     movingDirection = vector(0, 0),
+    physics = {
+        body = nil,
+        shape = nil,
+        fixture = nil
+    }
 }
 Player.__index = Player
 
@@ -32,9 +37,16 @@ function Player:load()
     self.animations.up = anim8.newAnimation(self.grid('1-4', 4), 0.2)
 
     self.anim = self.animations.left
+
+    self.physics.body = love.physics.newBody(World, self.x, self.y, "dynamic")
+    self.physics.shape = love.physics.newCircleShape(10)
+    self.physics.fixture = love.physics.newFixture(self.physics.body, self.physics.shape, 1)
 end
 
 function Player:update(dt)
+    self.x = self.physics.body:getX()
+    self.y = self.physics.body:getY()
+
     local viewingDirection = vector(Ui.mousePos.x - Player.x, Ui.mousePos.y - Player.y)
     viewingDirection:normalizeInplace()
     self.viewingAngle = math.deg(viewingDirection:angleTo(vector(1, 0)))
@@ -73,10 +85,10 @@ function Player:update(dt)
     end
 
     if isMoving then
-        Player.x = Player.x + self.movingDirection.x * movingSpeed * dt
-        Player.y = Player.y + self.movingDirection.y * movingSpeed * dt
+        Player.physics.body:setLinearVelocity(self.movingDirection.x * movingSpeed, self.movingDirection.y * movingSpeed)
     else
         Player.anim:gotoFrame(2)
+        Player.physics.body:setLinearVelocity(0, 0)
     end
 
     Player.anim:update(dt)

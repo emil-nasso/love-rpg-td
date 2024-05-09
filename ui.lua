@@ -48,8 +48,8 @@ function Ui:keyPressed(key)
     end
 end
 
-function Ui:draw()
-    self:drawDebug()
+function Ui:draw(offsetX, offsetY)
+    self:drawDebug(offsetX, offsetY)
     self:drawPlayerBar(10, love.graphics.getHeight() - 75, Player.health, "Health", Ui.colors.red)
     self:drawPlayerBar(10, love.graphics.getHeight() - 50, Player.health, "Mana", Ui.colors.blue)
     self:drawPlayerBar(10, love.graphics.getHeight() - 25, Player.stamina, "Stamina", Ui.colors.yellow)
@@ -68,7 +68,7 @@ function Ui:drawPlayerBar(x, y, percentage, label, color)
     love.graphics.print(label, x + 115, y)
 end
 
-function Ui:drawDebug()
+function Ui:drawDebug(offsetX, offsetY)
     love.graphics.setFont(Ui.fonts.regularMedium)
 
     local y = 5;
@@ -90,6 +90,44 @@ function Ui:drawDebug()
     for i, message in ipairs(messages) do
         love.graphics.print(message, 5, y + ((i - 1) * 20))
     end
+
+    local pos = vector(Player.x, Player.y) + vector(offsetX, offsetY)
+    -- Player location crosshair
+    love.graphics.setColor(Ui.colors.red.r, Ui.colors.red.g, Ui.colors.red.b, 1)
+    love.graphics.line(pos.x-20, pos.y, pos.x+20, pos.y)
+    love.graphics.line(pos.x, pos.y-20, pos.x, pos.y+20)
+end
+
+function Ui:drawPhysics(offsetX, offsetY)
+    local offset = vector(offsetX, offsetY)
+    for i1, body in pairs(World:getBodies()) do
+        for i2, fixture in pairs(body:getFixtures()) do
+            local shape = fixture:getShape()
+            local shapeType = shape:getType()
+
+            if shapeType == "circle" then
+                local point = vector(body:getWorldPoints(shape:getPoint())) + offset
+                love.graphics.circle("line", point.x, point.y, shape:getRadius())
+            elseif shapeType == "polygon" then
+                love.graphics.polygon("line", OffsetPoints({body:getWorldPoints(shape:getPoints())}, offset))
+            elseif shapeType == "edge" then
+                love.graphics.line(OffsetPoints({body:getWorldPoints(shape:getPoints())}, offset))
+            elseif shapeType == "chain" then
+                love.graphics.line(OffsetPoints({body:getWorldPoints(shape:getPoints())}, offset))
+            end
+        end
+    end
+end
+
+function OffsetPoints(points, offset)
+    local result = {}
+    for i3 = 1, #points, 2 do
+        local x = points[i3] + offset.x
+        local y = points[i3 + 1] + offset.y
+        table.insert(result, x)
+        table.insert(result, y)
+    end
+    return result
 end
 
 function Ui:getCameraPosition()
