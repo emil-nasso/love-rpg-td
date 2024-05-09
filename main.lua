@@ -5,6 +5,7 @@ function love.load()
 
     love.physics.setMeter(32)
     World = love.physics.newWorld(0, 0, true)
+    World:setCallbacks(beginContact, endContact)
 
     Ui = (require 'ui'):new()
     Player = (require 'player'):new()
@@ -30,7 +31,8 @@ function love.load()
 
         local body = love.physics.newBody(World, object.x + object.width/2, object.y + object.height/2, "static")
         local shape = love.physics.newRectangleShape(object.width, object.height)
-        love.physics.newFixture(body, shape, 1)
+        local fixture = love.physics.newFixture(body, shape, 1)
+        fixture:setUserData("map-collidable")
     end
 
     Map:removeLayer("Collision")
@@ -62,4 +64,21 @@ end
 
 function love.mousepressed()
     Ui:mouseMoved()
+    Player:shoot()
+end
+
+function beginContact(a, b, coll)
+    Ui:addDebugMessage("begin-contact: '" .. (a:getUserData() or '') .. "' and '" .. (b:getUserData() or '') .. "'")
+
+    if (a:getUserData() == "projectile") then
+        a:destroy()
+    end
+
+    if (b:getUserData() == "projectile") then
+        b:destroy()
+    end
+end
+
+function endContact(a, b, coll)
+    Ui:addDebugMessage("end-contact: '" .. (a:getUserData() or '') .. "' and '" .. (b:getUserData() or '') .. "'")
 end

@@ -10,8 +10,10 @@ Ui = {
     },
     fonts = {
         regularMedium = love.graphics.newFont('fonts/bitstream_vera_sans/Vera.ttf', 16),
+        boldSmall = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 10),
         boldMedium = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 16),
-    }
+    },
+    debugMessages = {},
 }
 Ui.__index = Ui
 
@@ -69,12 +71,12 @@ function Ui:drawPlayerBar(x, y, percentage, label, color)
 end
 
 function Ui:drawDebug(offsetX, offsetY)
-    love.graphics.setFont(Ui.fonts.regularMedium)
+    love.graphics.setFont(Ui.fonts.boldSmall)
 
     local y = 5;
     local messages = {
         "Mouse: " .. FormatCoord(self.mousePos),
-        "Mouse move countdown: " .. self.mouseMoveCountdown,
+        "Mouse move countdown: " .. string.format("%.2f", self.mouseMoveCountdown),
         "Player: " .. FormatCoord(Player),
         "Direction degrees: " .. string.format("%.2f", Player.viewingAngle),
         "Moving direction: " .. FormatCoord(Player.movingDirection),
@@ -83,12 +85,12 @@ function Ui:drawDebug(offsetX, offsetY)
     }
 
     love.graphics.setColor(Ui.colors.black.r, Ui.colors.black.g, Ui.colors.black.b, 0.2)
-    love.graphics.rectangle("fill", 0, 0, 275, #messages * 20 + 20)
+    love.graphics.rectangle("fill", 600, 0, 200, #messages * 20 + 20)
 
-    love.graphics.setColor(Ui.colors.white.r, Ui.colors.white.g, Ui.colors.white.b, 0.4)
+    love.graphics.setColor(Ui.colors.white.r, Ui.colors.white.g, Ui.colors.white.b, 0.7)
 
     for i, message in ipairs(messages) do
-        love.graphics.print(message, 5, y + ((i - 1) * 20))
+        love.graphics.print(message, 605, y + ((i - 1) * 10))
     end
 
     local pos = vector(Player.x, Player.y) + vector(offsetX, offsetY)
@@ -96,6 +98,18 @@ function Ui:drawDebug(offsetX, offsetY)
     love.graphics.setColor(Ui.colors.red.r, Ui.colors.red.g, Ui.colors.red.b, 1)
     love.graphics.line(pos.x-20, pos.y, pos.x+20, pos.y)
     love.graphics.line(pos.x, pos.y-20, pos.x, pos.y+20)
+
+    love.graphics.setColor(Ui.colors.black.r, Ui.colors.black.g, Ui.colors.black.b, 1)
+    for index, value in ipairs(self.debugMessages) do
+        love.graphics.print(value, 5, index * 10 - 5)
+    end
+end
+
+function Ui:addDebugMessage(message)
+    table.insert(self.debugMessages, message)
+    if (#self.debugMessages > 10) then
+        table.remove(self.debugMessages, 1)
+    end
 end
 
 function Ui:drawPhysics(offsetX, offsetY)

@@ -11,7 +11,9 @@ Player = {
     health = 100,
     mana = 100,
     viewingAngle = 0,
+    viewingDirection = vector(0, 0),
     movingDirection = vector(0, 0),
+    projectiles = {},
     physics = {
         body = nil,
         shape = nil,
@@ -41,15 +43,30 @@ function Player:load()
     self.physics.body = love.physics.newBody(World, self.x, self.y, "dynamic")
     self.physics.shape = love.physics.newCircleShape(10)
     self.physics.fixture = love.physics.newFixture(self.physics.body, self.physics.shape, 1)
+    self.physics.fixture:setUserData("player")
+end
+
+function Player:shoot()
+    -- TODO: Första skottet är supersnabbt, av någon anledning
+    local startX = self.x + (self.viewingDirection.x * 20)
+    local startY = self.y + (self.viewingDirection.y * 20)
+    local projectile = love.physics.newBody(World, startX, startY, "dynamic")
+    local shape = love.physics.newCircleShape(5)
+    local fixture = love.physics.newFixture(projectile, shape, 10)
+
+    projectile:applyForce(self.viewingDirection.x * 15000, self.viewingDirection.y * 15000)
+    fixture:setUserData("projectile")
+
+    table.insert(self.projectiles, projectile)
 end
 
 function Player:update(dt)
     self.x = self.physics.body:getX()
     self.y = self.physics.body:getY()
 
-    local viewingDirection = vector(Ui.mousePos.x - Player.x, Ui.mousePos.y - Player.y)
-    viewingDirection:normalizeInplace()
-    self.viewingAngle = math.deg(viewingDirection:angleTo(vector(1, 0)))
+    self.viewingDirection = vector(Ui.mousePos.x - Player.x, Ui.mousePos.y - Player.y)
+    self.viewingDirection:normalizeInplace()
+    self.viewingAngle = math.deg(self.viewingDirection:angleTo(vector(1, 0)))
 
     local movingSpeed = Player.speed
     self.movingDirection = vector(0, 0)
