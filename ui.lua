@@ -58,10 +58,11 @@ end
 function Ui:draw(offsetX, offsetY)
     if (self.showDebug) then
         self:drawDebug(offsetX, offsetY)
+        self:drawMobsDebug(offsetX, offsetY)
         self:drawPhysics(offsetX, offsetY)
     end
     self:drawPlayerBar(10, love.graphics.getHeight() - 75, Player.health, "Health", Ui.colors.red)
-    self:drawPlayerBar(10, love.graphics.getHeight() - 50, Player.health, "Mana", Ui.colors.blue)
+    self:drawPlayerBar(10, love.graphics.getHeight() - 50, Player.mana, "Mana", Ui.colors.blue)
     self:drawPlayerBar(10, love.graphics.getHeight() - 25, Player.stamina, "Stamina", Ui.colors.yellow)
 end
 
@@ -113,6 +114,18 @@ function Ui:drawDebug(offsetX, offsetY)
     end
 end
 
+function Ui:drawMobsDebug(offsetX, offsetY)
+    love.graphics.setColor(Ui.colors.yellow.r, Ui.colors.yellow.g, Ui.colors.yellow.b, 1)
+    for index, mob in pairs(Mobs.mobs) do
+        love.graphics.line(
+            mob.body:getX() + offsetX,
+            mob.body:getY() + offsetY,
+            mob.body:getX() + offsetX + mob.movementV.x * 25,
+            mob.body:getY() + offsetY + mob.movementV.y * 25
+        )
+    end
+end
+
 function Ui:addDebugMessage(message)
     table.insert(self.debugMessages, message)
     if (#self.debugMessages > 10) then
@@ -121,6 +134,7 @@ function Ui:addDebugMessage(message)
 end
 
 function Ui:drawPhysics(offsetX, offsetY)
+    love.graphics.setColor(Ui.colors.white.r, Ui.colors.white.g, Ui.colors.white.b, 1)
     local offset = vector(offsetX, offsetY)
     for i1, body in pairs(World:getBodies()) do
         for i2, fixture in pairs(body:getFixtures()) do

@@ -12,11 +12,18 @@ function love.load()
     Player = (require 'player'):new()
     Map = (require 'libraries/sti')('map.lua')
     Effects = (require 'effects'):new()
+    Mobs = (require 'mobs'):new()
 
     Ui:load()
     Player:load()
+    Mobs:load()
 
-    -- TODO: Lägga in Sprites lagret i Tiled, så att man kan ha det i rätt renderingsordning
+    for x = 1, 10, 1 do
+        for y = 1, 10, 1 do
+            Mobs:spawn(300 + (x*25), 300 + (y*25))
+        end
+    end
+
     local spriteLayer = Map.layers["Sprites"]
     spriteLayer.player = Player
 
@@ -26,6 +33,7 @@ function love.load()
             love.graphics.setColor(1, 0, 0, 1)
             love.graphics.circle("fill", value:getBody():getX(), value:getBody():getY(), 5)
         end
+        Mobs:draw()
     end
 
     spriteLayer.update = function(self, dt)
@@ -38,7 +46,7 @@ function love.load()
         local body = love.physics.newBody(World, object.x + object.width/2, object.y + object.height/2, "static")
         local shape = love.physics.newRectangleShape(object.width, object.height)
         local fixture = love.physics.newFixture(body, shape, 1)
-        fixture:setUserData("map-collidable")
+        fixture:setUserData({type='map-collidable'})
     end
 
     Map:removeLayer("Collision")
@@ -46,6 +54,7 @@ end
 
 function love.update(dt)
     Map:update(dt)
+    Mobs:move(dt)
     Ui:update(dt)
     World:update(dt)
     Effects:update(dt)
@@ -63,37 +72,60 @@ end
 
 function love.keypressed(key)
     Ui:keyPressed(key)
+    Player:keyPressed(key)
 end
 
 function love.mousemoved()
     Ui:mouseMoved()
 end
 
-function love.mousepressed()
-    Ui:addDebugMessage("mousepressed")
+function love.mousepressed(x, y, button)
+    Ui:addDebugMessage("mousepressed btn " .. button)
     Ui:mouseMoved()
-    Player:startShooting()
-    --Player:shoot()
+    if (button == 1) then
+        Player:startShooting()
+    elseif (button == 2) then
+        local camera = Ui:getCameraPosition()
+        Player:detonateShock(x + camera.x, y + camera.y)
+    end
 end
 
-function love.mousereleased()
+function love.mousereleased(x, y, button)
     Ui:addDebugMessage("mousereleased")
-    Player:stopShooting()
+    if (button == 1) then
+        Player:stopShooting()
+    end
 end
 
 function beginContact(a, b, coll)
-    Ui:addDebugMessage("begin-contact: '" .. (a:getUserData() or '') .. "' and '" .. (b:getUserData() or '') .. "'")
+    Ui:addDebugMessage("begin-contact: '" .. (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
 
-    if (a:getUserData() == "projectile") then
-        Player:removeProjectile(a)
-        Effects:addExplosion(a:getBody():getX(), a:getBody():getY())
+    local projectile = nil;
+    if (a:getUserData().type == "projectile") then
+       projectile = a
+    elseif (b:getUserData().type == "projectile") then
+        projectile = b
     end
-    if (b:getUserData() == "projectile") then
-        Player:removeProjectile(b)
-        Effects:addExplosion(b:getBody():getX(), b:getBody():getY())
+
+    local mob = nil;
+    if (a:getUserData().type == 'mob') then
+        mob = a
+    elseif (b:getUserData().type == 'mob') then
+        mob = b
+    end
+
+    if (projectile) then
+        Player:removeProjectile(projectile)
+        Effects:addExplosion(projectile:getBody():getX(), projectile:getBody():getY())
+    end
+
+    if (projectile and mob) then
+        local m = mob:getUserData()
+        Mobs:remove(m)
+        Ui:addDebugMessage("Mob hit by projectile.")
     end
 end
 
 function endContact(a, b, coll)
-    Ui:addDebugMessage("end-contact: '" .. (a:getUserData() or '') .. "' and '" .. (b:getUserData() or '') .. "'")
+    Ui:addDebugMessage("end-contact: '" .. (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
 end

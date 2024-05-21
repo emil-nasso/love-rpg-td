@@ -10,6 +10,7 @@ Player = {
     staminaRecovery = 25,
     health = 100,
     mana = 100,
+    manaRecovery = 50,
     viewingAngle = 0,
     viewingDirection = vector(0, 0),
     movingDirection = vector(0, 0),
@@ -44,7 +45,7 @@ function Player:load()
     self.physics.body = love.physics.newBody(World, self.x, self.y, "dynamic")
     self.physics.shape = love.physics.newCircleShape(10)
     self.physics.fixture = love.physics.newFixture(self.physics.body, self.physics.shape, 1)
-    self.physics.fixture:setUserData("player")
+    self.physics.fixture:setUserData({type = 'player'})
 end
 
 function Player:startShooting()
@@ -54,7 +55,10 @@ function Player:startShooting()
 end
 
 function Player:stopShooting()
-    Timer.cancel(self.shootingTimerHandle)
+    if (self.shootingTimerHandle) then
+        Timer.cancel(self.shootingTimerHandle)
+        self.shootingTimerHandle = nil
+    end
 end
 
 function Player:shoot()
@@ -66,9 +70,23 @@ function Player:shoot()
     local fixture = love.physics.newFixture(body, shape, 10)
 
     body:setLinearVelocity(self.viewingDirection.x * 500, self.viewingDirection.y * 500)
-    fixture:setUserData("projectile")
+    fixture:setUserData({type = 'projectile'})
 
     table.insert(self.projectiles, fixture)
+end
+
+function Player:keyPressed(key)
+    if (key == 'space') then
+        self:detonateShock(self.physics.body:getX(), self.physics.body:getY())
+    end
+end
+
+function Player:detonateShock(x, y)
+    if (self.mana >= 50) then
+        self.mana = self.mana - 50
+        Effects:addShockwave(x, y)
+        Mobs:applyShockwave(x, y)
+    end
 end
 
 function Player:removeProjectile(projectile)
@@ -120,6 +138,13 @@ function Player:update(dt)
     else
         if (Player.stamina < 100) then
             Player.stamina = Player.stamina + Player.staminaRecovery * dt
+        end
+    end
+
+    if (self.mana < 100) then
+        self.mana = self.mana + self.manaRecovery * dt
+        if (self.mana > 100) then
+            self.mana = 100
         end
     end
 
