@@ -3,8 +3,7 @@
 * Attack animations for spiders
 * Damage to player, respawning
 * Healing spell
-* Spells hotbar rendering
-* Arrow graphics for projectils. StoneSoup/gui/spells/components/arrow
+* Arrow graphics for projectils. StoneSoup/effects
 * Mob spawners
 * Map extension
 * NPC system. Dialogs

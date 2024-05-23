@@ -16,6 +16,12 @@ Ui = {
         boldSmall = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 10),
         boldMedium = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 16),
     },
+    sprites = {
+        sprint = love.graphics.newImage('sprites/StoneSoup/gui/spells/air/swiftness_new.png'),
+        shotgun = love.graphics.newImage('sprites/StoneSoup/gui/spells/earth/sandblast_new.png'),
+        shockwave = love.graphics.newImage('sprites/StoneSoup/gui/spells/translocation/dispersal_new.png'),
+        heal = love.graphics.newImage('sprites/StoneSoup/gui/spells/necromancy/regeneration_new.png'),
+    },
     debugMessages = {},
     showDebug = true,
 }
@@ -84,6 +90,41 @@ function Ui:draw(offsetX, offsetY)
     self:drawPlayerBar(10, windowH - 75, Player.health, "Health", Ui.colors.red)
     self:drawPlayerBar(10, windowH - 50, Player.mana, "Mana", Ui.colors.blue)
     self:drawPlayerBar(10, windowH - 25, Player.stamina, "Stamina", Ui.colors.yellow)
+
+    Ui:setColor(nil)
+
+    love.graphics.setFont(self.fonts.boldSmall)
+    love.graphics.draw(self.sprites.sprint, 250, windowH - 50, 0, 1.2)
+    love.graphics.printf("shift", 250, windowH - 15, 32 * 1.2, 'center')
+    if (love.keyboard.isDown("lshift")) then
+        Ui:setColor(Ui.colors.yellow)
+        love.graphics.rectangle("line", 250, windowH - 50, 32 * 1.2, 32 * 1.2)
+        Ui:setColor(nil)
+    end
+
+    love.graphics.draw(self.sprites.shockwave, 300, windowH - 50, 0, 1.2)
+    love.graphics.printf("space", 300, windowH - 15, 32 * 1.2, 'center')
+    if (love.keyboard.isDown("space")) then
+        Ui:setColor(Ui.colors.yellow)
+        love.graphics.rectangle("line", 300, windowH - 50, 32 * 1.2, 32 * 1.2)
+        Ui:setColor(nil)
+    end
+
+    love.graphics.draw(self.sprites.shotgun, 350, windowH - 50, 0, 1.2)
+    love.graphics.printf("2", 350, windowH - 15, 32 * 1.2, 'center')
+    if (love.keyboard.isDown("2")) then
+        Ui:setColor(Ui.colors.yellow)
+        love.graphics.rectangle("line", 350, windowH - 50, 32 * 1.2, 32 * 1.2)
+        Ui:setColor(nil)
+    end
+
+    love.graphics.draw(self.sprites.heal, 400, windowH - 50, 0, 1.2)
+    love.graphics.printf("3", 400, windowH - 15, 32 * 1.2, 'center')
+    if (love.keyboard.isDown("3")) then
+        Ui:setColor(Ui.colors.yellow)
+        love.graphics.rectangle("line", 400, windowH - 50, 32 * 1.2, 32 * 1.2)
+        Ui:setColor(nil)
+    end
 end
 
 function Ui:drawPlayerBar(x, y, percentage, label, color)

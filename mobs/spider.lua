@@ -38,6 +38,10 @@ function Spider:spawn(x, y)
 end
 
 function Spider:hit(damage)
+    -- Needed to handle multiple hit collisions being resolved at the same time
+    if (self.health <= 0) then
+        return
+    end
     Ui:addDebugMessage("Removing mob")
 
     self.health = self.health - damage
