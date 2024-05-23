@@ -20,6 +20,12 @@ function love.load()
     MobsManager = (require 'mobs-manager'):new()
     ItemsManager = (require 'items-manager'):new()
 
+    CollisionCategories = {
+        default = 1,
+        projectile = 2,
+        wall = 3,
+    }
+
     OpenDialog = nil
 
     Ui:load()
@@ -57,6 +63,8 @@ function love.load()
         local body = love.physics.newBody(World, object.x + object.width/2, object.y + object.height/2, "static")
         local shape = love.physics.newRectangleShape(object.width, object.height)
         local fixture = love.physics.newFixture(body, shape, 1)
+        fixture:setCategory(CollisionCategories.wall)
+        fixture:setMask(CollisionCategories.projectile)
         fixture:setUserData({type='map-collidable'})
     end
 

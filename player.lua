@@ -79,14 +79,40 @@ function Player:stopShooting()
 end
 
 function Player:shoot()
-    -- TODO: Första skottet är supersnabbt, av någon anledning
+    self:spawnProjectile(0)
+end
+
+function Player:shootShotgun()
+    local angles = {
+        math.rad(-15),
+        math.rad(-10),
+        math.rad(-5),
+        math.rad(0),
+        math.rad(5),
+        math.rad(10),
+        math.rad(15),
+    }
+
+    for i, angle in ipairs(angles) do
+        self:spawnProjectile(angle)
+    end
+end
+
+function Player:spawnProjectile(angle)
     local startX = self.x + (self.viewingDirection.x * 20)
     local startY = self.y + (self.viewingDirection.y * 20)
     local body = love.physics.newBody(World, startX, startY, "dynamic")
     local shape = love.physics.newCircleShape(5)
     local fixture = love.physics.newFixture(body, shape, 1)
+    fixture:setCategory(CollisionCategories.projectile)
+    fixture:setMask(CollisionCategories.projectile, CollisionCategories.wall)
 
-    body:setLinearVelocity(self.viewingDirection.x * 500, self.viewingDirection.y * 500)
+    local direction = vector(self.viewingDirection.x, self.viewingDirection.y)
+    if (angle ~= 0) then
+        direction:rotateInplace(angle)
+    end
+
+    body:setLinearVelocity(direction.x * 500, direction.y * 500)
     fixture:setUserData({type = 'projectile'})
 
     table.insert(self.projectiles, fixture)
@@ -104,7 +130,9 @@ end
 
 function Player:keyPressed(key)
     if (key == 'space') then
-        self:detonateShock(self.physics.body:getX(), self.physics.body:getY())
+        self:detonateShock(self:getX(), self:getY())
+    elseif (key == '2') then
+        self:shootShotgun()
     end
 end
 

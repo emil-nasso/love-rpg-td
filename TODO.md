@@ -1,4 +1,4 @@
-* Inventory system for pickup of items, with grid ui
+* Different collision groups for water and other world walls so that projectiles flies over water but collides with trees
 * Equipment system
 * Attack animations for spiders
 * Damage to player, respawning
@@ -11,4 +11,3 @@
 * Quest system
 * Save/state/progress system
 * Event logger. "You picked up 10 gold". "Congratulations! You are now level 12."
-* Make projectiles NOT collide with static bodies.
