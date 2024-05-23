@@ -85,7 +85,7 @@ function Player:detonateShock(x, y)
     if (self.mana >= 50) then
         self.mana = self.mana - 50
         Effects:addShockwave(x, y)
-        Mobs:applyShockwave(x, y)
+        MobsManager:applyShockwave(x, y)
     end
 end
 

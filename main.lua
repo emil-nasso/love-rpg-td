@@ -12,15 +12,16 @@ function love.load()
     Player = (require 'player'):new()
     Map = (require 'libraries/sti')('map.lua')
     Effects = (require 'effects'):new()
-    Mobs = (require 'mobs'):new()
+    MobsManager = (require 'mobs-manager'):new()
+    Spider = (require 'mobs/spider')
 
     Ui:load()
     Player:load()
-    Mobs:load()
+    MobsManager:load()
 
     for x = 1, 5, 1 do
         for y = 1, 5, 1 do
-            Mobs:spawnSpider(300 + (x*25), 300 + (y*25))
+            Spider:spawn(300 + (x*25), 300 + (y*25))
         end
     end
 
@@ -33,7 +34,7 @@ function love.load()
             love.graphics.setColor(1, 0, 0, 1)
             love.graphics.circle("fill", value:getBody():getX(), value:getBody():getY(), 5)
         end
-        Mobs:draw()
+        MobsManager:draw()
     end
 
     spriteLayer.update = function(self, dt)
@@ -54,7 +55,7 @@ end
 
 function love.update(dt)
     Map:update(dt)
-    Mobs:move(dt)
+    MobsManager:move(dt)
     Ui:update(dt)
     World:update(dt)
     Effects:update(dt)
@@ -120,8 +121,8 @@ function beginContact(a, b, coll)
     end
 
     if (projectile and mob) then
-        local m = mob:getUserData()
-        Mobs:hit(m, 20)
+        local mob = mob:getUserData()
+        mob:hit(20)
         Ui:addDebugMessage("Mob hit by projectile.")
     end
 end

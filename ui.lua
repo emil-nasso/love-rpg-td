@@ -116,7 +116,7 @@ end
 
 function Ui:drawMobsDebug(offsetX, offsetY)
     love.graphics.setColor(Ui.colors.yellow.r, Ui.colors.yellow.g, Ui.colors.yellow.b, 1)
-    for index, mob in pairs(Mobs.mobs) do
+    for index, mob in pairs(MobsManager.mobs) do
         love.graphics.line(
             mob.body:getX() + offsetX,
             mob.body:getY() + offsetY,
