@@ -18,9 +18,9 @@ function love.load()
     Player:load()
     Mobs:load()
 
-    for x = 1, 10, 1 do
-        for y = 1, 10, 1 do
-            Mobs:spawn(300 + (x*25), 300 + (y*25))
+    for x = 1, 5, 1 do
+        for y = 1, 5, 1 do
+            Mobs:spawnSpider(300 + (x*25), 300 + (y*25))
         end
     end
 
@@ -121,7 +121,7 @@ function beginContact(a, b, coll)
 
     if (projectile and mob) then
         local m = mob:getUserData()
-        Mobs:remove(m)
+        Mobs:hit(m, 20)
         Ui:addDebugMessage("Mob hit by projectile.")
     end
 end

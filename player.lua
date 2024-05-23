@@ -67,7 +67,7 @@ function Player:shoot()
     local startY = self.y + (self.viewingDirection.y * 20)
     local body = love.physics.newBody(World, startX, startY, "dynamic")
     local shape = love.physics.newCircleShape(5)
-    local fixture = love.physics.newFixture(body, shape, 10)
+    local fixture = love.physics.newFixture(body, shape, 1)
 
     body:setLinearVelocity(self.viewingDirection.x * 500, self.viewingDirection.y * 500)
     fixture:setUserData({type = 'projectile'})
@@ -150,8 +150,10 @@ function Player:update(dt)
 
     if isMoving then
         Player.physics.body:setLinearVelocity(self.movingDirection.x * movingSpeed, self.movingDirection.y * movingSpeed)
+        Player.anim:resume()
     else
         Player.anim:gotoFrame(2)
+        Player.anim:pause()
         Player.physics.body:setLinearVelocity(0, 0)
     end
 
