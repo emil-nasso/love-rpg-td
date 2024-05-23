@@ -83,6 +83,11 @@ function Player:shoot()
 end
 
 function Player:shootShotgun()
+    if (self.mana < 25) then
+        return
+    end
+    self.mana = self.mana - 25
+
     local angles = {
         math.rad(-15),
         math.rad(-10),
@@ -105,7 +110,7 @@ function Player:spawnProjectile(angle)
     local shape = love.physics.newCircleShape(5)
     local fixture = love.physics.newFixture(body, shape, 1)
     fixture:setCategory(CollisionCategories.projectile)
-    fixture:setMask(CollisionCategories.projectile, CollisionCategories.wall)
+    fixture:setMask(CollisionCategories.projectile, CollisionCategories.lowTerrain)
 
     local direction = vector(self.viewingDirection.x, self.viewingDirection.y)
     if (angle ~= 0) then

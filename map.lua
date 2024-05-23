@@ -9,7 +9,7 @@ return {
   height = 30,
   tilewidth = 32,
   tileheight = 32,
-  nextlayerid = 6,
+  nextlayerid = 7,
   nextobjectid = 39,
   properties = {},
   tilesets = {
@@ -309,7 +309,7 @@ return {
       type = "objectgroup",
       draworder = "topdown",
       id = 4,
-      name = "Collision",
+      name = "HighTerrain",
       class = "",
       visible = true,
       opacity = 1,
@@ -409,7 +409,23 @@ return {
           rotation = 0,
           visible = true,
           properties = {}
-        },
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      draworder = "topdown",
+      id = 6,
+      name = "LowTerrain",
+      class = "",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
+      properties = {},
+      objects = {
         {
           id = 18,
           name = "",

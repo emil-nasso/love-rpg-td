@@ -23,7 +23,8 @@ function love.load()
     CollisionCategories = {
         default = 1,
         projectile = 2,
-        wall = 3,
+        highTerrain = 3,
+        lowTerrain = 4,
     }
 
     OpenDialog = nil
@@ -57,18 +58,25 @@ function love.load()
         Player:update(dt)
     end
 
-    local collisionsLayer = Map.layers["Collision"]
-    for key, object in pairs(collisionsLayer.objects) do
-
+    for key, object in pairs(Map.layers["HighTerrain"].objects) do
         local body = love.physics.newBody(World, object.x + object.width/2, object.y + object.height/2, "static")
         local shape = love.physics.newRectangleShape(object.width, object.height)
         local fixture = love.physics.newFixture(body, shape, 1)
-        fixture:setCategory(CollisionCategories.wall)
-        fixture:setMask(CollisionCategories.projectile)
-        fixture:setUserData({type='map-collidable'})
+        fixture:setCategory(CollisionCategories.highTerrain)
+        fixture:setUserData({type='high-terrain'})
     end
 
-    Map:removeLayer("Collision")
+    for key, object in pairs(Map.layers["LowTerrain"].objects) do
+        local body = love.physics.newBody(World, object.x + object.width/2, object.y + object.height/2, "static")
+        local shape = love.physics.newRectangleShape(object.width, object.height)
+        local fixture = love.physics.newFixture(body, shape, 1)
+        fixture:setCategory(CollisionCategories.lowTerrain)
+        fixture:setMask(CollisionCategories.projectile)
+        fixture:setUserData({type='low-terrain'})
+    end
+
+    Map:removeLayer("HighTerrain")
+    Map:removeLayer("LowTerrain")
 end
 
 function love.update(dt)
