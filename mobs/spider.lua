@@ -42,6 +42,7 @@ function Spider:hit(damage)
 
     self.health = self.health - damage
     if (self.health <= 0) then
+        Gold:spawn(math.random(1, 10), self.body:getX() + 16, self.body:getY() + 16)
         MobsManager:remove(self)
     end
 end

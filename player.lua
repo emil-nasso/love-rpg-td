@@ -4,6 +4,8 @@ local vector = require 'libraries/hump/vector'
 Player = {
     x = 100,
     y = 100,
+    xp = 0,
+    level = 1,
     speed = 250,
     stamina = 100,
     staminaDrain = 50,
@@ -46,6 +48,10 @@ function Player:load()
     self.physics.shape = love.physics.newCircleShape(10)
     self.physics.fixture = love.physics.newFixture(self.physics.body, self.physics.shape, 1)
     self.physics.fixture:setUserData({type = 'player'})
+end
+
+function Player:vector()
+    return vector(self.physics.body:getX(), self.physics.body:getY())
 end
 
 function Player:startShooting()

@@ -7,17 +7,21 @@ function love.load()
     World = love.physics.newWorld(0, 0, true)
     World:setCallbacks(beginContact, endContact)
 
+    Spider = (require 'mobs/spider')
+    Gold = (require 'items/gold')
+
     Timer = require 'libraries/hump/timer'
     Ui = (require 'ui'):new()
     Player = (require 'player'):new()
     Map = (require 'libraries/sti')('map.lua')
     Effects = (require 'effects'):new()
     MobsManager = (require 'mobs-manager'):new()
-    Spider = (require 'mobs/spider')
+    ItemsManager = (require 'items-manager'):new()
 
     Ui:load()
     Player:load()
     MobsManager:load()
+    ItemsManager:load()
 
     for x = 1, 5, 1 do
         for y = 1, 5, 1 do
@@ -29,12 +33,14 @@ function love.load()
     spriteLayer.player = Player
 
     spriteLayer.draw = function(self)
+        ItemsManager:drawGroundItems()
         Player.anim:draw(Player.spriteSheet, Player.x, Player.y, nil, 2, nil, 6, 9)
+        MobsManager:draw()
+
         for index, value in ipairs(Player.projectiles) do
             love.graphics.setColor(1, 0, 0, 1)
             love.graphics.circle("fill", value:getBody():getX(), value:getBody():getY(), 5)
         end
-        MobsManager:draw()
     end
 
     spriteLayer.update = function(self, dt)
@@ -59,6 +65,7 @@ function love.update(dt)
     Ui:update(dt)
     World:update(dt)
     Effects:update(dt)
+    ItemsManager:update(dt)
 end
 
 function love.draw()
@@ -122,7 +129,7 @@ function beginContact(a, b, coll)
 
     if (projectile and mob) then
         local mob = mob:getUserData()
-        mob:hit(20)
+        mob:hit(45)
         Ui:addDebugMessage("Mob hit by projectile.")
     end
 end

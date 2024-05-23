@@ -64,6 +64,12 @@ function Ui:draw(offsetX, offsetY)
     self:drawPlayerBar(10, love.graphics.getHeight() - 75, Player.health, "Health", Ui.colors.red)
     self:drawPlayerBar(10, love.graphics.getHeight() - 50, Player.mana, "Mana", Ui.colors.blue)
     self:drawPlayerBar(10, love.graphics.getHeight() - 25, Player.stamina, "Stamina", Ui.colors.yellow)
+
+    love.graphics.setColor(self.colors.black.r, self.colors.black.g, self.colors.black.b, 1)
+    love.graphics.print("Gold: " .. ItemsManager.goldCount, 10, 500)
+
+    love.graphics.setColor(self.colors.black.r, self.colors.black.g, self.colors.black.b, 1)
+    love.graphics.print("Gold: " .. ItemsManager.goldCount, 10, 500)
 end
 
 function Ui:drawPlayerBar(x, y, percentage, label, color)
