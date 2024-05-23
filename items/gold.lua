@@ -29,6 +29,8 @@ function Gold:spawn(amount, x, y)
     setmetatable(gold, Gold)
 
     ItemsManager:addOnGround(gold)
+
+    return gold
 end
 
 function Gold:vector()

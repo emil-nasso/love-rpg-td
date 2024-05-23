@@ -7,6 +7,9 @@ Ui = {
         black = { r = 0, g = 0, b = 0 },
         white = { r = 1, g = 1, b = 1 },
         blue = { r = 0, g = 0, b = 1 },
+        lightGray = { r = 0.7, g = 0.7, b = 0.7 },
+        gray = { r = 0.5, g = 0.5, b = 0.5 },
+        darkGray = { r = 0.3, g = 0.3, b = 0.3 },
     },
     fonts = {
         regularMedium = love.graphics.newFont('fonts/bitstream_vera_sans/Vera.ttf', 16),
@@ -22,6 +25,13 @@ function Ui:new(o)
     local ui = o or {}
     setmetatable(ui, Ui)
     return ui
+end
+
+function Ui:setColor(color, alpha)
+    local alpha = alpha or 1
+    local color = color or { r = 1, g = 1, b = 1}
+
+    love.graphics.setColor(color.r, color.g, color.b, alpha)
 end
 
 function Ui:load()
@@ -61,27 +71,31 @@ function Ui:draw(offsetX, offsetY)
         self:drawMobsDebug(offsetX, offsetY)
         self:drawPhysics(offsetX, offsetY)
     end
-    self:drawPlayerBar(10, love.graphics.getHeight() - 75, Player.health, "Health", Ui.colors.red)
-    self:drawPlayerBar(10, love.graphics.getHeight() - 50, Player.mana, "Mana", Ui.colors.blue)
-    self:drawPlayerBar(10, love.graphics.getHeight() - 25, Player.stamina, "Stamina", Ui.colors.yellow)
 
-    love.graphics.setColor(self.colors.black.r, self.colors.black.g, self.colors.black.b, 1)
-    love.graphics.print("Gold: " .. ItemsManager.goldCount, 10, 500)
+    local windowH = love.graphics.getHeight()
 
-    love.graphics.setColor(self.colors.black.r, self.colors.black.g, self.colors.black.b, 1)
-    love.graphics.print("Gold: " .. ItemsManager.goldCount, 10, 500)
+    love.graphics.setFont(self.fonts.boldMedium)
+    Ui:setColor(Ui.colors.black)
+    love.graphics.print("Gold: " .. ItemsManager.goldCount, 10, windowH - 150)
+    love.graphics.print("Level: " .. Player.level, 10, windowH - 125)
+
+    local xpProgress = ((Player.xp - Player.currentLevelXp) / (Player.nextLevelXp - Player.currentLevelXp)) * 100
+    self:drawPlayerBar(10, windowH - 100, xpProgress, "XP: " .. Player.xp .. "/" .. Player.nextLevelXp, Ui.colors.white)
+    self:drawPlayerBar(10, windowH - 75, Player.health, "Health", Ui.colors.red)
+    self:drawPlayerBar(10, windowH - 50, Player.mana, "Mana", Ui.colors.blue)
+    self:drawPlayerBar(10, windowH - 25, Player.stamina, "Stamina", Ui.colors.yellow)
 end
 
 function Ui:drawPlayerBar(x, y, percentage, label, color)
     love.graphics.setFont(self.fonts.boldMedium)
 
-    love.graphics.setColor(self.colors.black.r, self.colors.black.g, self.colors.black.b, 1)
+    Ui:setColor(Ui.colors.black)
     love.graphics.rectangle("fill", x, y, 110, 20, 5)
 
-    love.graphics.setColor(color.r, color.g, color.b, 1)
+    Ui:setColor(color)
     love.graphics.rectangle("fill", x + 5, y + 5, percentage, 10)
 
-    love.graphics.setColor(self.colors.black.r, self.colors.black.g, self.colors.black.b, 1)
+    Ui:setColor(Ui.colors.black)
     love.graphics.print(label, x + 115, y)
 end
 
@@ -99,29 +113,28 @@ function Ui:drawDebug(offsetX, offsetY)
         "FPS: " .. love.timer.getFPS(),
     }
 
-    love.graphics.setColor(Ui.colors.black.r, Ui.colors.black.g, Ui.colors.black.b, 0.2)
+    Ui:setColor(Ui.colors.black, 0.2)
     love.graphics.rectangle("fill", 600, 0, 200, #messages * 20 + 20)
 
-    love.graphics.setColor(Ui.colors.white.r, Ui.colors.white.g, Ui.colors.white.b, 0.7)
-
+    Ui:setColor(Ui.colors.white, 0.7)
     for i, message in ipairs(messages) do
         love.graphics.print(message, 605, y + ((i - 1) * 10))
     end
 
     local pos = vector(Player.x, Player.y) + vector(offsetX, offsetY)
     -- Player location crosshair
-    love.graphics.setColor(Ui.colors.red.r, Ui.colors.red.g, Ui.colors.red.b, 1)
+    Ui:setColor(Ui.colors.red)
     love.graphics.line(pos.x-20, pos.y, pos.x+20, pos.y)
     love.graphics.line(pos.x, pos.y-20, pos.x, pos.y+20)
 
-    love.graphics.setColor(Ui.colors.black.r, Ui.colors.black.g, Ui.colors.black.b, 1)
+    Ui:setColor(Ui.colors.black)
     for index, value in ipairs(self.debugMessages) do
         love.graphics.print(value, 5, index * 10 - 5)
     end
 end
 
 function Ui:drawMobsDebug(offsetX, offsetY)
-    love.graphics.setColor(Ui.colors.yellow.r, Ui.colors.yellow.g, Ui.colors.yellow.b, 1)
+    Ui:setColor(Ui.colors.yellow)
     for index, mob in pairs(MobsManager.mobs) do
         love.graphics.line(
             mob.body:getX() + offsetX,
@@ -140,7 +153,7 @@ function Ui:addDebugMessage(message)
 end
 
 function Ui:drawPhysics(offsetX, offsetY)
-    love.graphics.setColor(Ui.colors.white.r, Ui.colors.white.g, Ui.colors.white.b, 1)
+    Ui:setColor(Ui.colors.white)
     local offset = vector(offsetX, offsetY)
     for i1, body in pairs(World:getBodies()) do
         for i2, fixture in pairs(body:getFixtures()) do

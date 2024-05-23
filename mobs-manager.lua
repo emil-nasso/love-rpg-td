@@ -53,13 +53,13 @@ end
 
 function MobsManager:draw()
     for index, mob in pairs(self.mobs) do
-        love.graphics.setColor(1, 1, 1, 1) -- reset colors
+        Ui:setColor(nil)
         mob.animation:draw(mob.spriteSheet, mob.body:getX(), mob.body:getY(), nil, 1, nil, 32, 32)
 
         if (mob.health < mob.maxHealth) then
-            love.graphics.setColor(Ui.colors.black.r, Ui.colors.black.g, Ui.colors.black.b, 1)
+            Ui:setColor(Ui.colors.black)
             love.graphics.rectangle("fill", mob.body:getX() - 20, mob.body:getY() - 25, 40, 6)
-            love.graphics.setColor(Ui.colors.red.r, Ui.colors.red.g, Ui.colors.red.b, 1)
+            Ui:setColor(Ui.colors.red)
             love.graphics.rectangle("fill", mob.body:getX() - 19, mob.body:getY() - 24, 38 * (mob.health/mob.maxHealth), 4)
         end
     end

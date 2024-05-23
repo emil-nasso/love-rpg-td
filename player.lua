@@ -2,10 +2,13 @@ local anim8 = require 'libraries/anim8/anim8'
 local vector = require 'libraries/hump/vector'
 
 Player = {
+    -- TODO: Ta bort x och y här och använda physics.body:getX() och physics.body:getY() istället
     x = 100,
     y = 100,
     xp = 0,
     level = 1,
+    currentLevelXp = 0,
+    nextLevelXp = 100,
     speed = 250,
     stamina = 100,
     staminaDrain = 50,
@@ -51,11 +54,19 @@ function Player:load()
 end
 
 function Player:vector()
-    return vector(self.physics.body:getX(), self.physics.body:getY())
+    return vector(self:getX(), self:getY())
+end
+
+function Player:getX()
+    return self.physics.body:getX()
+end
+
+function Player:getY()
+    return self.physics.body:getY()
 end
 
 function Player:startShooting()
-    self.shootingTimerHandle = Timer.every(0.25, function()
+    self.shootingTimerHandle = Timer.every(0.1, function()
         self:shoot()
     end)
 end
@@ -79,6 +90,16 @@ function Player:shoot()
     fixture:setUserData({type = 'projectile'})
 
     table.insert(self.projectiles, fixture)
+end
+
+function Player:gainXp(xp)
+    self.xp = self.xp + xp
+    if (self.xp >= self.nextLevelXp) then
+        self.level = self.level + 1
+        self.currentLevelXp = self.nextLevelXp
+        self.nextLevelXp = self.nextLevelXp + (self.nextLevelXp * 1.5)
+        Effects:addHeroText("You gained a level!\nYou are now level " .. self.level .. ".")
+    end
 end
 
 function Player:keyPressed(key)

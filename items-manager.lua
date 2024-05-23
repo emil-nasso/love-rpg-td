@@ -40,13 +40,28 @@ function ItemsManager:removeFromGround(item)
     end
 end
 
+function ItemsManager:lootGround(x, y, distance)
+    local player = vector(x, y)
+    local looted = {}
+
+    for index, item in pairs(self.ground) do
+        local itemV = item:vector()
+        local distanceToPlayer = itemV:dist(player)
+
+        if (distanceToPlayer < distance) then
+            table.insert(looted, item)
+        end
+    end
+    return looted
+end
+
 function ItemsManager:addOnGround(item)
     table.insert(self.ground, item)
 end
 
 function ItemsManager:drawGroundItems()
     for index, item in pairs(self.ground) do
-        love.graphics.setColor(1, 1, 1, 1) -- reset colors
+        Ui:setColor(nil)
         love.graphics.draw(item.sprite, item.x, item.y, nil, 1, nil, 32, 32)
     end
 end

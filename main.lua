@@ -1,4 +1,5 @@
 function love.load()
+    math.randomseed(os.time())
     love.window.setTitle("Emils gejm")
     love.window.setMode(800, 600, { resizable = false })
     love.graphics.setDefaultFilter("nearest", "nearest")
@@ -9,6 +10,7 @@ function love.load()
 
     Spider = (require 'mobs/spider')
     Gold = (require 'items/gold')
+    LootDialog = (require 'ui/loot-dialog')
 
     Timer = require 'libraries/hump/timer'
     Ui = (require 'ui'):new()
@@ -17,6 +19,8 @@ function love.load()
     Effects = (require 'effects'):new()
     MobsManager = (require 'mobs-manager'):new()
     ItemsManager = (require 'items-manager'):new()
+
+    OpenDialog = nil
 
     Ui:load()
     Player:load()
@@ -38,7 +42,7 @@ function love.load()
         MobsManager:draw()
 
         for index, value in ipairs(Player.projectiles) do
-            love.graphics.setColor(1, 0, 0, 1)
+            Ui:setColor(Ui.colors.red)
             love.graphics.circle("fill", value:getBody():getX(), value:getBody():getY(), 5)
         end
     end
@@ -75,26 +79,48 @@ function love.draw()
     Effects:draw(-camera.x, -camera.y)
     Ui:draw(-camera.x, -camera.y)
 
-    love.graphics.setColor(1, 1, 1, 1) -- reset colors
+    if (OpenDialog) then
+        OpenDialog:draw()
+    end
+
+    Ui:setColor(nil)
 end
 
 function love.keypressed(key)
-    Ui:keyPressed(key)
-    Player:keyPressed(key)
+    if OpenDialog then
+        OpenDialog:keyPressed(key)
+    else
+        if key == 'e' then
+            local looted = ItemsManager:lootGround(Player:getX(), Player:getY(), 300)
+            if (#looted > 0) then
+                OpenDialog = LootDialog:new(looted)
+            end
+        end
+        Ui:keyPressed(key)
+        Player:keyPressed(key)
+    end
 end
 
 function love.mousemoved()
-    Ui:mouseMoved()
+    if (OpenDialog) then
+        --OpenDialog:mouseMoved()
+    else
+        Ui:mouseMoved()
+    end
 end
 
 function love.mousepressed(x, y, button)
-    Ui:addDebugMessage("mousepressed btn " .. button)
-    Ui:mouseMoved()
-    if (button == 1) then
-        Player:startShooting()
-    elseif (button == 2) then
-        local camera = Ui:getCameraPosition()
-        Player:detonateShock(x + camera.x, y + camera.y)
+    if (OpenDialog) then
+        OpenDialog:mousePressed(x, y, button)
+    else
+        Ui:addDebugMessage("mousepressed btn " .. button)
+        Ui:mouseMoved()
+        if (button == 1) then
+            Player:startShooting()
+        elseif (button == 2) then
+            local camera = Ui:getCameraPosition()
+            Player:detonateShock(x + camera.x, y + camera.y)
+        end
     end
 end
 
