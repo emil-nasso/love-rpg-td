@@ -19,6 +19,7 @@ function love.load()
     Effects = (require 'effects'):new()
     MobsManager = (require 'mobs-manager'):new()
     ItemsManager = (require 'items-manager'):new()
+    CursorManager = (require 'cursor-manager'):new()
 
     CollisionCategories = {
         default = 1,
@@ -100,6 +101,8 @@ function love.draw()
     end
 
     Ui:setColor(nil)
+
+    CursorManager:draw()
 end
 
 function love.keypressed(key)
