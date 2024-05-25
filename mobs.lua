@@ -1,21 +1,12 @@
-local anim8 = require 'libraries/anim8/anim8'
-local vector = require 'libraries/hump/vector'
-
-MobsManager = {
+Mobs = {
     mobs = {},
 }
-MobsManager.__index = MobsManager
+Mobs.__index = Mobs
 
-function MobsManager:new(o)
-    local mobs = o or {}
-    setmetatable(mobs, MobsManager)
-    return mobs
+function Mobs:load()
 end
 
-function MobsManager:load()
-end
-
-function MobsManager:remove(mob)
+function Mobs:remove(mob)
     mob.fixture:destroy()
     for i, value in ipairs(self.mobs) do
         if value == mob then
@@ -25,20 +16,20 @@ function MobsManager:remove(mob)
     end
 end
 
-function MobsManager:add(mob)
+function Mobs:add(mob)
     table.insert(self.mobs, mob)
 end
 
-function MobsManager:move(dt)
+function Mobs:move(dt)
     for index, mob in pairs(self.mobs) do
         mob:move(dt)
     end
 end
 
-function MobsManager:applyShockwave(x, y)
-    local originV = vector(x, y)
+function Mobs:applyShockwave(x, y)
+    local originV = Vector(x, y)
     for index, mob in pairs(self.mobs) do
-        local mobV = vector(mob.body:getX(), mob.body:getY())
+        local mobV = Vector(mob.body:getX(), mob.body:getY())
         local distanceToOrigin = mobV:dist(originV)
 
         if (distanceToOrigin < 200) then
@@ -51,7 +42,7 @@ function MobsManager:applyShockwave(x, y)
     end
 end
 
-function MobsManager:draw()
+function Mobs:draw()
     for index, mob in pairs(self.mobs) do
         Ui:setColor(nil)
         mob.animation:draw(mob.spriteSheet, mob.body:getX(), mob.body:getY(), nil, 1, nil, 32, 32)
@@ -65,4 +56,4 @@ function MobsManager:draw()
     end
 end
 
-return MobsManager
+return Mobs

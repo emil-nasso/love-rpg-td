@@ -1,22 +1,19 @@
-local anim8 = require 'libraries/anim8/anim8'
-local vector = require 'libraries/hump/vector'
-
-TurretManager = {
+Turrets = {
     shooters = {},
     pushers = {},
 }
 
-TurretManager.__index = TurretManager
+Turrets.__index = Turrets
 
-function TurretManager:deployShooter(mousePosition)
+function Turrets:deployShooter(mousePosition)
     table.insert(self.shooters, {x=mousePosition.x, y=mousePosition.y})
 end
 
-function TurretManager:deployPusher(mousePosition)
+function Turrets:deployPusher(mousePosition)
     table.insert(self.pushers, {x=mousePosition.x, y=mousePosition.y})
 end
 
-function TurretManager:draw()
+function Turrets:draw()
     for index, shooter in pairs(self.shooters) do
         love.graphics.setColor(255, 0, 0)
         love.graphics.circle('fill', shooter.x, shooter.y, 20)
@@ -28,4 +25,4 @@ function TurretManager:draw()
     end
 end
 
-return TurretManager
+return Turrets

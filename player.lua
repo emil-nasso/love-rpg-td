@@ -1,10 +1,4 @@
-local anim8 = require 'libraries/anim8/anim8'
-local vector = require 'libraries/hump/vector'
-
 Player = {
-    -- TODO: Ta bort x och y här och använda physics.body:getX() och physics.body:getY() istället
-    x = 100,
-    y = 100,
     xp = 0,
     level = 1,
     currentLevelXp = 0,
@@ -17,8 +11,8 @@ Player = {
     mana = 100,
     manaRecovery = 50,
     viewingAngle = 0,
-    viewingDirection = vector(0, 0),
-    movingDirection = vector(0, 0),
+    viewingDirection = Vector(0, 0),
+    movingDirection = Vector(0, 0),
     projectiles = {},
     physics = {
         body = nil,
@@ -29,32 +23,26 @@ Player = {
 }
 Player.__index = Player
 
-function Player:new(o)
-    local player = o or {}
-    setmetatable(player, Player)
-    return player
-end
-
 function Player:load()
     self.spriteSheet = love.graphics.newImage('sprites/player-sheet.png')
-    self.grid = anim8.newGrid(12, 18, self.spriteSheet:getWidth(), self.spriteSheet:getHeight())
+    self.grid = Anim8.newGrid(12, 18, self.spriteSheet:getWidth(), self.spriteSheet:getHeight())
 
     self.animations = {}
-    self.animations.down = anim8.newAnimation(self.grid('1-4', 1), 0.2)
-    self.animations.left = anim8.newAnimation(self.grid('1-4', 2), 0.2)
-    self.animations.right = anim8.newAnimation(self.grid('1-4', 3), 0.2)
-    self.animations.up = anim8.newAnimation(self.grid('1-4', 4), 0.2)
+    self.animations.down = Anim8.newAnimation(self.grid('1-4', 1), 0.2)
+    self.animations.left = Anim8.newAnimation(self.grid('1-4', 2), 0.2)
+    self.animations.right = Anim8.newAnimation(self.grid('1-4', 3), 0.2)
+    self.animations.up = Anim8.newAnimation(self.grid('1-4', 4), 0.2)
 
     self.anim = self.animations.left
 
-    self.physics.body = love.physics.newBody(World, self.x, self.y, "dynamic")
+    self.physics.body = love.physics.newBody(World, 100, 100, "dynamic")
     self.physics.shape = love.physics.newCircleShape(10)
     self.physics.fixture = love.physics.newFixture(self.physics.body, self.physics.shape, 1)
     self.physics.fixture:setUserData({type = 'player'})
 end
 
 function Player:vector()
-    return vector(self:getX(), self:getY())
+    return Vector(self:getX(), self:getY())
 end
 
 function Player:getX()
@@ -104,15 +92,15 @@ function Player:shootShotgun()
 end
 
 function Player:spawnProjectile(angle)
-    local startX = self.x + (self.viewingDirection.x * 20)
-    local startY = self.y + (self.viewingDirection.y * 20)
+    local startX = self:getX() + (self.viewingDirection.x * 20)
+    local startY = self:getY() + (self.viewingDirection.y * 20)
     local body = love.physics.newBody(World, startX, startY, "dynamic")
     local shape = love.physics.newCircleShape(5)
     local fixture = love.physics.newFixture(body, shape, 1)
     fixture:setCategory(CollisionCategories.projectile)
     fixture:setMask(CollisionCategories.projectile, CollisionCategories.lowTerrain)
 
-    local direction = vector(self.viewingDirection.x, self.viewingDirection.y)
+    local direction = Vector(self.viewingDirection.x, self.viewingDirection.y)
     if (angle ~= 0) then
         direction:rotateInplace(angle)
     end
@@ -145,7 +133,7 @@ function Player:detonateShock(x, y)
     if (self.mana >= 50) then
         self.mana = self.mana - 50
         Effects:addShockwave(x, y)
-        MobsManager:applyShockwave(x, y)
+        Mobs:applyShockwave(x, y)
     end
 end
 
@@ -161,15 +149,12 @@ function Player:removeProjectile(projectile)
 end
 
 function Player:update(dt)
-    self.x = self.physics.body:getX()
-    self.y = self.physics.body:getY()
-
-    self.viewingDirection = vector(Ui.mousePos.x - Player.x, Ui.mousePos.y - Player.y)
+    self.viewingDirection = Vector(Ui.mousePos.x - self:getX(), Ui.mousePos.y - self:getY())
     self.viewingDirection:normalizeInplace()
-    self.viewingAngle = math.deg(self.viewingDirection:angleTo(vector(1, 0)))
+    self.viewingAngle = math.deg(self.viewingDirection:angleTo(Vector(1, 0)))
 
     local movingSpeed = Player.speed
-    self.movingDirection = vector(0, 0)
+    self.movingDirection = Vector(0, 0)
 
     if love.keyboard.isDown("d") then
         self.movingDirection.x = 1
@@ -188,7 +173,7 @@ function Player:update(dt)
     end
 
     self.movingDirection:normalizeInplace()
-    local isMoving = self.movingDirection ~= vector(0, 0)
+    local isMoving = self.movingDirection ~= Vector(0, 0)
 
     if love.keyboard.isDown("lshift") and isMoving then
         if (Player.stamina > 0) then

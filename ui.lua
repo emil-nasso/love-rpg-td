@@ -1,5 +1,3 @@
-local vector = require 'libraries/hump/vector'
-
 Ui = {
     colors = {
         yellow = { r = 1, g = 1, b = 0 },
@@ -36,7 +34,7 @@ function Ui:new(o)
 end
 
 function Ui:mousePositionVector()
-    return vector(love.mouse.getPosition())
+    return Vector(love.mouse.getPosition())
 end
 
 function Ui:setColor(color, alpha)
@@ -88,7 +86,7 @@ function Ui:draw(offsetX, offsetY)
 
     love.graphics.setFont(self.fonts.boldMedium)
     Ui:setColor(Ui.colors.black)
-    love.graphics.print("Gold: " .. ItemsManager.goldCount, 10, windowH - 150)
+    love.graphics.print("Gold: " .. Items.goldCount, 10, windowH - 150)
     love.graphics.print("Level: " .. Player.level, 10, windowH - 125)
 
     local xpProgress = ((Player.xp - Player.currentLevelXp) / (Player.nextLevelXp - Player.currentLevelXp)) * 100
@@ -153,10 +151,10 @@ function Ui:drawDebug(offsetX, offsetY)
     local messages = {
         "Mouse: " .. FormatCoord(self.mousePos),
         "Mouse move countdown: " .. string.format("%.2f", self.mouseMoveCountdown),
-        "Player: " .. FormatCoord(Player),
+        "Player: " .. FormatCoord(Player:vector()),
         "Direction degrees: " .. string.format("%.2f", Player.viewingAngle),
         "Moving direction: " .. FormatCoord(Player.movingDirection),
-        "Resolution: " .. FormatCoord(vector(love.graphics.getWidth(), love.graphics.getHeight())),
+        "Resolution: " .. FormatCoord(Vector(love.graphics.getWidth(), love.graphics.getHeight())),
         "FPS: " .. love.timer.getFPS(),
     }
 
@@ -168,7 +166,7 @@ function Ui:drawDebug(offsetX, offsetY)
         love.graphics.print(message, 605, y + ((i - 1) * 10))
     end
 
-    local pos = vector(Player.x, Player.y) + vector(offsetX, offsetY)
+    local pos = Player:vector() + Vector(offsetX, offsetY)
     -- Player location crosshair
     Ui:setColor(Ui.colors.red)
     love.graphics.line(pos.x-20, pos.y, pos.x+20, pos.y)
@@ -182,7 +180,7 @@ end
 
 function Ui:drawMobsDebug(offsetX, offsetY)
     Ui:setColor(Ui.colors.yellow)
-    for index, mob in pairs(MobsManager.mobs) do
+    for index, mob in pairs(Mobs.mobs) do
         love.graphics.line(
             mob.body:getX() + offsetX,
             mob.body:getY() + offsetY,
@@ -201,14 +199,14 @@ end
 
 function Ui:drawPhysics(offsetX, offsetY)
     Ui:setColor(Ui.colors.white)
-    local offset = vector(offsetX, offsetY)
+    local offset = Vector(offsetX, offsetY)
     for i1, body in pairs(World:getBodies()) do
         for i2, fixture in pairs(body:getFixtures()) do
             local shape = fixture:getShape()
             local shapeType = shape:getType()
 
             if shapeType == "circle" then
-                local point = vector(body:getWorldPoints(shape:getPoint())) + offset
+                local point = Vector(body:getWorldPoints(shape:getPoint())) + offset
                 love.graphics.circle("line", point.x, point.y, shape:getRadius())
             elseif shapeType == "polygon" then
                 love.graphics.polygon("line", OffsetPoints({body:getWorldPoints(shape:getPoints())}, offset))
@@ -236,7 +234,7 @@ function Ui:getCameraPosition()
     local windowW = love.graphics.getWidth()
     local windowH = love.graphics.getHeight()
 
-    local camera = vector(math.floor(Player.x - windowW / 2), math.floor(Player.y - windowH / 2))
+    local camera = Vector(math.floor(Player:getX() - windowW / 2), math.floor(Player:getY() - windowH / 2))
 
     -- Left border
     if camera.x < 0 then
@@ -266,9 +264,9 @@ function Ui:getCameraPosition()
 end
 
 function Ui:mouseMoved()
-    self.mousePos = vector(love.mouse.getPosition())
+    self.mousePos = Vector(love.mouse.getPosition())
     local camera = self.getCameraPosition(Player)
-    self.mousePos = vector(self.mousePos.x + camera.x, self.mousePos.y + camera.y)
+    self.mousePos = Vector(self.mousePos.x + camera.x, self.mousePos.y + camera.y)
     self.mouseMoveCountdown = 2
     self.mouseRecentlyMoved = true
 end

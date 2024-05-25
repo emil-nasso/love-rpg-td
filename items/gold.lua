@@ -1,5 +1,3 @@
-local vector = require 'libraries/hump/vector'
-
 Gold = {
     type='gold',
     autoPickup=true,
@@ -18,7 +16,7 @@ Gold.sprites[8] = love.graphics.newImage('sprites/StoneSoup/item/gold/gold_pile_
 Gold.sprites[9] = love.graphics.newImage('sprites/StoneSoup/item/gold/gold_pile_9.png')
 Gold.sprites[10] = love.graphics.newImage('sprites/StoneSoup/item/gold/gold_pile_10.png')
 
-function Gold:spawn(amount, x, y)
+function Gold.spawn(amount, x, y)
     local gold = {
         amount=amount,
         x=x,
@@ -28,20 +26,20 @@ function Gold:spawn(amount, x, y)
 
     setmetatable(gold, Gold)
 
-    ItemsManager:addOnGround(gold)
+    Items:addOnGround(gold)
 
     return gold
 end
 
 function Gold:vector()
-    return vector(self.x, self.y)
+    return Vector(self.x, self.y)
 end
 
 function Gold:pickup()
     Ui:addDebugMessage("Picking up gold")
 
-    ItemsManager:removeFromGround(self)
-    ItemsManager.goldCount = ItemsManager.goldCount + self.amount
+    Items:removeFromGround(self)
+    Items.goldCount = Items.goldCount + self.amount
 end
 
 return Gold

@@ -1,22 +1,14 @@
-local vector = require 'libraries/hump/vector'
-
-ItemsManager = {
+Items = {
     goldCount = 0,
     ground = {},
     inventory = {},
 }
-ItemsManager.__index = ItemsManager
+Items.__index = Items
 
-function ItemsManager:new(o)
-    local itemsManager = o or {}
-    setmetatable(itemsManager, ItemsManager)
-    return itemsManager
+function Items:load()
 end
 
-function ItemsManager:load()
-end
-
-function ItemsManager:update(dt)
+function Items:update(dt)
     local player = Player:vector()
 
     for index, item in pairs(self.ground) do
@@ -31,7 +23,7 @@ function ItemsManager:update(dt)
     end
 end
 
-function ItemsManager:removeFromGround(item)
+function Items:removeFromGround(item)
     for i, value in ipairs(self.ground) do
         if value == item then
             table.remove(self.ground, i)
@@ -40,8 +32,8 @@ function ItemsManager:removeFromGround(item)
     end
 end
 
-function ItemsManager:lootGround(x, y, distance)
-    local player = vector(x, y)
+function Items:lootGround(x, y, distance)
+    local player = Vector(x, y)
     local looted = {}
 
     for index, item in pairs(self.ground) do
@@ -55,15 +47,15 @@ function ItemsManager:lootGround(x, y, distance)
     return looted
 end
 
-function ItemsManager:addOnGround(item)
+function Items:addOnGround(item)
     table.insert(self.ground, item)
 end
 
-function ItemsManager:drawGroundItems()
+function Items:drawGroundItems()
     for index, item in pairs(self.ground) do
         Ui:setColor(nil)
         love.graphics.draw(item.sprite, item.x, item.y, nil, 1, nil, 32, 32)
     end
 end
 
-return ItemsManager
+return Items

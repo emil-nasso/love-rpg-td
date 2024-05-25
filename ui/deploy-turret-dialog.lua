@@ -43,12 +43,12 @@ function DeployTurretDialog:open(mousePosition)
 end
 
 function DeployTurretDialog:deployPusher()
-    TurretManager:deployPusher(self.mousePosition)
+    Turrets:deployPusher(self.mousePosition)
     self:close()
 end
 
 function DeployTurretDialog:deployShooter()
-    TurretManager:deployShooter(self.mousePosition)
+    Turrets:deployShooter(self.mousePosition)
     self:close()
 end
 

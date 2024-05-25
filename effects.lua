@@ -4,12 +4,6 @@ Effects = {
 }
 Effects.__index = Effects
 
-function Effects:new(o)
-    local effects = o or {}
-    setmetatable(effects, Effects)
-    return effects
-end
-
 function Effects:addExplosion(x, y)
     local explosion = {
         type = 'explosion',

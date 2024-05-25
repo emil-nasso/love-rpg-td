@@ -1,3 +1,14 @@
+require('helpers')
+Anim8 = require 'libraries/anim8/anim8'
+Vector = require 'libraries/hump/vector'
+OpenDialog = nil
+CollisionCategories = {
+    default = 1,
+    projectile = 2,
+    highTerrain = 3,
+    lowTerrain = 4,
+}
+
 function love.load()
     math.randomseed(os.time())
     love.window.setTitle("Emils gejm")
@@ -9,37 +20,28 @@ function love.load()
     World:setCallbacks(beginContact, endContact)
 
     Timer = require 'libraries/hump/timer'
-    Ui = (require 'ui'):new()
-    Player = (require 'player'):new()
     Map = (require 'libraries/sti')('map.lua')
-    Effects = (require 'effects'):new()
-    MobsManager = (require 'mobs-manager'):new()
-    ItemsManager = (require 'items-manager'):new()
-    CursorManager = (require 'cursor-manager'):new()
-    TurretManager = (require 'turret-manager')
+
+    require 'player'
+    Player:load()
+    require 'ui'
+    Ui:load()
+    require 'effects'
+    require 'mobs'
+    Mobs:load()
+    require 'Items'
+    Items:load()
+    require 'cursors'
+    require 'turrets'
 
     Spider = (require 'mobs/spider')
     Gold = (require 'items/gold')
     LootDialog = (require 'ui/loot-dialog'):new()
     DeployTurretDialog = (require 'ui/deploy-turret-dialog').new()
 
-    CollisionCategories = {
-        default = 1,
-        projectile = 2,
-        highTerrain = 3,
-        lowTerrain = 4,
-    }
-
-    OpenDialog = nil
-
-    Ui:load()
-    Player:load()
-    MobsManager:load()
-    ItemsManager:load()
-
     for x = 1, 5, 1 do
         for y = 1, 5, 1 do
-            Spider:spawn(300 + (x*25), 300 + (y*25))
+            Spider.spawn(300 + (x*25), 300 + (y*25))
         end
     end
 
@@ -47,10 +49,10 @@ function love.load()
     spriteLayer.player = Player
 
     spriteLayer.draw = function(self)
-        ItemsManager:drawGroundItems()
-        Player.anim:draw(Player.spriteSheet, Player.x, Player.y, nil, 2, nil, 6, 9)
-        MobsManager:draw()
-        TurretManager:draw()
+        Items:drawGroundItems()
+        Player.anim:draw(Player.spriteSheet, Player:getX(), Player:getY(), nil, 2, nil, 6, 9)
+        Mobs:draw()
+        Turrets:draw()
 
         for index, value in ipairs(Player.projectiles) do
             Ui:setColor(Ui.colors.red)
@@ -62,7 +64,7 @@ function love.load()
         Player:update(dt)
     end
 
-    for key, object in pairs(Map.layers["HighTerrain"].objects) do
+    for _, object in pairs(Map.layers["HighTerrain"].objects) do
         local body = love.physics.newBody(World, object.x + object.width/2, object.y + object.height/2, "static")
         local shape = love.physics.newRectangleShape(object.width, object.height)
         local fixture = love.physics.newFixture(body, shape, 1)
@@ -70,7 +72,7 @@ function love.load()
         fixture:setUserData({type='high-terrain'})
     end
 
-    for key, object in pairs(Map.layers["LowTerrain"].objects) do
+    for _, object in pairs(Map.layers["LowTerrain"].objects) do
         local body = love.physics.newBody(World, object.x + object.width/2, object.y + object.height/2, "static")
         local shape = love.physics.newRectangleShape(object.width, object.height)
         local fixture = love.physics.newFixture(body, shape, 1)
@@ -85,11 +87,11 @@ end
 
 function love.update(dt)
     Map:update(dt)
-    MobsManager:move(dt)
+    Mobs:move(dt)
     Ui:update(dt)
     World:update(dt)
     Effects:update(dt)
-    ItemsManager:update(dt)
+    Items:update(dt)
 end
 
 function love.draw()
@@ -105,7 +107,7 @@ function love.draw()
 
     Ui:setColor(nil)
 
-    CursorManager:draw()
+    Cursors:draw()
 end
 
 function love.keypressed(key)
@@ -113,7 +115,7 @@ function love.keypressed(key)
         OpenDialog:keyPressed(key)
     else
         if key == 'e' then
-            local looted = ItemsManager:lootGround(Player:getX(), Player:getY(), 300)
+            local looted = Items:lootGround(Player:getX(), Player:getY(), 300)
             if (#looted > 0) then
                 LootDialog:open(looted)
             end
