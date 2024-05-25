@@ -1,4 +1,10 @@
-* Different collision groups for water and other world walls so that projectiles flies over water but collides with trees
+* break out button to class
+* get rid of x and y on player
+* font helper in Ui
+* basic version of turret deploying
+* github workflows
+* Sort out :new vs .new and make managers "singletons"
+* use position everywhere, instead of x + y vars
 * Equipment system
 * Attack animations for spiders
 * Damage to player, respawning

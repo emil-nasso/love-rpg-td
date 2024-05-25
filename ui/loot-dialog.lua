@@ -1,7 +1,7 @@
 LootDialog = {}
 LootDialog.__index = LootDialog
 
-function LootDialog:new(items)
+function LootDialog:new()
     local dialog = {
         x = 200,
         y = 100,
@@ -11,10 +11,20 @@ function LootDialog:new(items)
         buttons = {},
     }
 
+    dialog.buttons = {
+        {text="Close [esc]", x=160, y=250, w=110, h=40, action=function(self) self:close() end},
+        {text="Loot all [e]", x=280, y=250, w=110, h=40, action=function(self) self:lootAll() end},
+    }
+
+    setmetatable(dialog, LootDialog)
+    return dialog
+end
+
+function LootDialog:open(items)
     local row = 0
     local col = 0
     for index, item in pairs(items) do
-        table.insert(dialog.items, {
+        table.insert(self.items, {
             item = item,
             row = row,
             col = col,
@@ -26,14 +36,7 @@ function LootDialog:new(items)
             row = row + 1
         end
     end
-
-    dialog.buttons = {
-        {text="Close [esc]", x=160, y=250, w=110, h=40, action=function(self) self:close() end},
-        {text="Loot all [e]", x=280, y=250, w=110, h=40, action=function(self) self:lootAll() end},
-    }
-
-    setmetatable(dialog, LootDialog)
-    return dialog
+    OpenDialog = self
 end
 
 function LootDialog:atX(x)

@@ -7,6 +7,7 @@ Ui = {
         black = { r = 0, g = 0, b = 0 },
         white = { r = 1, g = 1, b = 1 },
         blue = { r = 0, g = 0, b = 1 },
+        green = { r = 0, g = 1, b = 0 },
         lightGray = { r = 0.7, g = 0.7, b = 0.7 },
         gray = { r = 0.5, g = 0.5, b = 0.5 },
         darkGray = { r = 0.3, g = 0.3, b = 0.3 },
@@ -15,6 +16,7 @@ Ui = {
         regularMedium = love.graphics.newFont('fonts/bitstream_vera_sans/Vera.ttf', 16),
         boldSmall = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 10),
         boldMedium = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 16),
+        boldLarge = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 24),
     },
     sprites = {
         sprint = love.graphics.newImage('sprites/StoneSoup/gui/spells/air/swiftness_new.png'),
@@ -31,6 +33,10 @@ function Ui:new(o)
     local ui = o or {}
     setmetatable(ui, Ui)
     return ui
+end
+
+function Ui:mousePositionVector()
+    return vector(love.mouse.getPosition())
 end
 
 function Ui:setColor(color, alpha)

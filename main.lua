@@ -8,10 +8,6 @@ function love.load()
     World = love.physics.newWorld(0, 0, true)
     World:setCallbacks(beginContact, endContact)
 
-    Spider = (require 'mobs/spider')
-    Gold = (require 'items/gold')
-    LootDialog = (require 'ui/loot-dialog')
-
     Timer = require 'libraries/hump/timer'
     Ui = (require 'ui'):new()
     Player = (require 'player'):new()
@@ -20,6 +16,12 @@ function love.load()
     MobsManager = (require 'mobs-manager'):new()
     ItemsManager = (require 'items-manager'):new()
     CursorManager = (require 'cursor-manager'):new()
+    TurretManager = (require 'turret-manager')
+
+    Spider = (require 'mobs/spider')
+    Gold = (require 'items/gold')
+    LootDialog = (require 'ui/loot-dialog'):new()
+    DeployTurretDialog = (require 'ui/deploy-turret-dialog').new()
 
     CollisionCategories = {
         default = 1,
@@ -48,6 +50,7 @@ function love.load()
         ItemsManager:drawGroundItems()
         Player.anim:draw(Player.spriteSheet, Player.x, Player.y, nil, 2, nil, 6, 9)
         MobsManager:draw()
+        TurretManager:draw()
 
         for index, value in ipairs(Player.projectiles) do
             Ui:setColor(Ui.colors.red)
@@ -112,7 +115,7 @@ function love.keypressed(key)
         if key == 'e' then
             local looted = ItemsManager:lootGround(Player:getX(), Player:getY(), 300)
             if (#looted > 0) then
-                OpenDialog = LootDialog:new(looted)
+                LootDialog:open(looted)
             end
         end
         Ui:keyPressed(key)
@@ -137,8 +140,9 @@ function love.mousepressed(x, y, button)
         if (button == 1) then
             Player:startShooting()
         elseif (button == 2) then
-            local camera = Ui:getCameraPosition()
-            Player:detonateShock(x + camera.x, y + camera.y)
+            if (OpenDialog == nil) then
+                DeployTurretDialog:open(Ui:mousePositionVector())
+            end
         end
     end
 end
