@@ -14,6 +14,7 @@ function Npcs:load()
         pos = pos,
         r = 20,
         name = "Gunnar",
+        sprite = love.graphics.newImage('sprites/StoneSoup/monster/boggart_new.png'),
         dialogue = {
             text = "Hi! Is there anything I can do for you today?",
             options = {
@@ -46,9 +47,13 @@ end
 
 function Npcs:draw()
     local mouse = Ui:mouseWorldPositionVector()
-    for index, npc in pairs(self.npcs) do
-        Ui:setColor(Ui.colors.yellow)
-        love.graphics.circle('fill', npc.pos.x, npc.pos.y, npc.r)
+    for _, npc in pairs(self.npcs) do
+        love.graphics.setFont(Ui.fonts.boldSmall)
+        Ui:setColor(Ui.colors.black)
+        love.graphics.print(npc.name, npc.pos.x - 20, npc.pos.y - 35)
+
+        Ui:setColor()
+        love.graphics.draw(npc.sprite, npc.pos.x, npc.pos.y, nil, 1, 1, npc.sprite:getWidth() / 2, npc.sprite:getHeight() / 2)
         if (mouse:dist(npc.pos) <= 20) then
             Cursors:setPointerCursor()
         end

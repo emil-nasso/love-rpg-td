@@ -30,6 +30,7 @@ function love.load()
     require 'cursors'
     require 'turrets'
     require 'npcs'
+    require 'projectiles'
 
     Player:load()
     Ui:load()
@@ -59,11 +60,7 @@ function love.load()
         Mobs:draw()
         Turrets:draw()
         Npcs:draw()
-
-        for index, value in ipairs(Player.projectiles) do
-            Ui:setColor(Ui.colors.red)
-            love.graphics.circle("fill", value:getBody():getX(), value:getBody():getY(), 5)
-        end
+        Projectiles:draw()
     end
 
     spriteLayer.update = function(self, dt)
@@ -99,6 +96,7 @@ function love.update(dt)
     World:update(dt)
     Effects:update(dt)
     Items:update(dt)
+    Projectiles:update(dt)
 end
 
 function love.draw()
@@ -187,7 +185,7 @@ function beginContact(a, b, coll)
     end
 
     if (projectile) then
-        Player:removeProjectile(projectile)
+        Projectiles:remove(projectile)
         Effects:addExplosion(projectile:getBody():getX(), projectile:getBody():getY())
     end
 

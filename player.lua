@@ -13,7 +13,6 @@ Player = {
     viewingAngle = 0,
     viewingDirection = Vector(0, 0),
     movingDirection = Vector(0, 0),
-    projectiles = {},
     physics = {
         body = nil,
         shape = nil,
@@ -67,7 +66,7 @@ function Player:stopShooting()
 end
 
 function Player:shoot()
-    self:spawnProjectile(0)
+    Projectiles:spawn(self:getX(), self:getY(), 600, self.viewingDirection, 0, 20)
 end
 
 function Player:shootShotgun()
@@ -87,28 +86,8 @@ function Player:shootShotgun()
     }
 
     for i, angle in ipairs(angles) do
-        self:spawnProjectile(angle)
+        Projectiles:spawn(self:getX(), self:getY(), 200, self.viewingDirection, angle, 20)
     end
-end
-
-function Player:spawnProjectile(angle)
-    local startX = self:getX() + (self.viewingDirection.x * 20)
-    local startY = self:getY() + (self.viewingDirection.y * 20)
-    local body = love.physics.newBody(World, startX, startY, "dynamic")
-    local shape = love.physics.newCircleShape(5)
-    local fixture = love.physics.newFixture(body, shape, 1)
-    fixture:setCategory(CollisionCategories.projectile)
-    fixture:setMask(CollisionCategories.projectile, CollisionCategories.lowTerrain)
-
-    local direction = Vector(self.viewingDirection.x, self.viewingDirection.y)
-    if (angle ~= 0) then
-        direction:rotateInplace(angle)
-    end
-
-    body:setLinearVelocity(direction.x * 500, direction.y * 500)
-    fixture:setUserData({type = 'projectile'})
-
-    table.insert(self.projectiles, fixture)
 end
 
 function Player:gainXp(xp)
@@ -134,17 +113,6 @@ function Player:detonateShock(x, y)
         self.mana = self.mana - 50
         Effects:addShockwave(x, y)
         Mobs:applyShockwave(x, y)
-    end
-end
-
-function Player:removeProjectile(projectile)
-    Ui:addDebugMessage("Removing projectile")
-    projectile:destroy()
-    for i, value in ipairs(Player.projectiles) do
-        if value == projectile then
-            table.remove(Player.projectiles, i)
-            break
-        end
     end
 end
 
@@ -223,14 +191,6 @@ function Player:update(dt)
             Player.anim = Player.animations.down
         elseif (self.movingDirection.y == -1) then
             Player.anim = Player.animations.up
-        end
-    end
-
-    for index, projectile in ipairs(self.projectiles) do
-        local distance = love.physics.getDistance(self.physics.fixture, projectile)
-
-        if (distance > 500) then
-            self:removeProjectile(projectile)
         end
     end
 end

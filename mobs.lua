@@ -21,9 +21,24 @@ function Mobs:add(mob)
 end
 
 function Mobs:move(dt)
-    for index, mob in pairs(self.mobs) do
+    for _, mob in pairs(self.mobs) do
         mob:move(dt)
     end
+end
+
+function Mobs:ClosestTo(x, y)
+    local closestMob = nil
+    local closestDistance = 9999999
+    for _, mob in pairs(self.mobs) do
+        local mobV = Vector(mob.body:getX(), mob.body:getY())
+        local distance = mobV:dist(Vector(x, y))
+        if (distance < closestDistance) then
+            closestDistance = distance
+            closestMob = mob
+        end
+    end
+
+    return closestMob
 end
 
 function Mobs:applyShockwave(x, y)

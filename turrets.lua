@@ -6,6 +6,17 @@ Turrets = {
 Turrets.__index = Turrets
 
 function Turrets:deployShooter(mousePosition)
+    Timer.every(0.5, function()
+        local mob = Mobs:ClosestTo(mousePosition.x, mousePosition.y)
+
+        if (mob == nil) then
+            return
+        end
+
+        local direction = Vector(mob.body:getX(), mob.body:getY()) - Vector(mousePosition.x, mousePosition.y)
+        direction:normalizeInplace()
+        Projectiles:spawn(mousePosition.x, mousePosition.y, 600, direction, 0, 30)
+    end)
     table.insert(self.shooters, {x=mousePosition.x, y=mousePosition.y})
 end
 
