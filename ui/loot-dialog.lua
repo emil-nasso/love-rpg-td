@@ -119,7 +119,7 @@ function LootDialog:draw()
         for row = 0, 3, 1 do
             local x1, y1, x2, y2  = self:gridCoord(col, row)
             if mouseX > x1 and mouseX < x2 and mouseY > y1 and mouseY < y2 then
-                Cursors:setDialogPointerCursor()
+                Cursors:setPointerCursor()
                 Ui:setColor(Ui.colors.lightGray)
                 love.graphics.rectangle('fill', x1, y1, x2-x1, y2-y1)
                 Ui:setColor(Ui.colors.white)

@@ -23,21 +23,26 @@ function love.load()
     Map = (require 'libraries/sti')('map.lua')
 
     require 'player'
-    Player:load()
     require 'ui'
-    Ui:load()
     require 'effects'
     require 'mobs'
-    Mobs:load()
     require 'Items'
-    Items:load()
     require 'cursors'
     require 'turrets'
+    require 'npcs'
+
+    Player:load()
+    Ui:load()
+    Mobs:load()
+    Items:load()
+    Npcs:load()
 
     Spider = (require 'mobs/spider')
     Gold = (require 'items/gold')
+    -- TODO: No constructors needed for the dialogs
     LootDialog = (require 'ui/loot-dialog'):new()
-    DeployTurretDialog = (require 'ui/deploy-turret-dialog').new()
+    DeployTurretDialog = (require 'ui/deploy-turret-dialog'):new()
+    DialogueDialog = (require 'ui/dialogue-dialog'):new()
 
     for x = 1, 5, 1 do
         for y = 1, 5, 1 do
@@ -53,6 +58,7 @@ function love.load()
         Player.anim:draw(Player.spriteSheet, Player:getX(), Player:getY(), nil, 2, nil, 6, 9)
         Mobs:draw()
         Turrets:draw()
+        Npcs:draw()
 
         for index, value in ipairs(Player.projectiles) do
             Ui:setColor(Ui.colors.red)
@@ -86,6 +92,7 @@ function love.load()
 end
 
 function love.update(dt)
+    --require("libraries/lovebird/lovebird").update()
     Map:update(dt)
     Mobs:move(dt)
     Ui:update(dt)
@@ -134,8 +141,14 @@ function love.mousemoved()
 end
 
 function love.mousepressed(x, y, button)
+    local cameraPosition = Ui:getCameraPosition()
+    local worldPosition = Vector(x, y) + cameraPosition
+    local npc = Npcs:getNpcAt(worldPosition)
+
     if (OpenDialog) then
         OpenDialog:mousePressed(x, y, button)
+    elseif (npc) then
+        DialogueDialog:open(npc.name, npc.dialogue)
     else
         Ui:addDebugMessage("mousepressed btn " .. button)
         Ui:mouseMoved()

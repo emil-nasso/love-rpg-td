@@ -8,18 +8,16 @@ Cursors = {
 }
 Cursors.__index = Cursors
 
-function Cursors:setDialogPointerCursor()
+function Cursors:setPointerCursor()
     self.pointer = true
 end
 
 function Cursors:draw()
-    if (OpenDialog) then
-        if (self.pointer) then
-            love.mouse.setCursor(self.cursors.pointer)
-            self.pointer = false
-        else
-            love.mouse.setCursor(self.cursors.arrow)
-        end
+    if (self.pointer) then
+        love.mouse.setCursor(self.cursors.pointer)
+        self.pointer = false
+    elseif (OpenDialog) then
+        love.mouse.setCursor(self.cursors.arrow)
     else
         love.mouse.setCursor(self.cursors.crosshair)
     end
