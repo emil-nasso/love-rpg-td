@@ -5,7 +5,7 @@ on:
     tags:
       - 'v*.*.*'  # Adjust this pattern as needed to match your versioning scheme
     branches:
-      - main  # Adjust this if your default branch is named differently  
+      - "*"  # Adjust this if your default branch is named differently  
   pull_request:
 
 jobs:
