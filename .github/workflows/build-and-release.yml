@@ -61,6 +61,9 @@ jobs:
           name: love2d-td-rpg-love-file
           path: ./release-assets
 
+      - name: List release-assets directory
+        run: ls -l ./release-assets
+
       - name: Get release by tag
         id: get_release
         uses: actions/github-script@v5
@@ -80,7 +83,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./release-assets/love2d-td-rpg-macos
+          asset_path: ./release-assets/love2d-td-rpg-macos.zip
           asset_name: love2d-td-rpg-macos.zip
           asset_content_type: application/zip
 
@@ -88,7 +91,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./release-assets/love2d-td-rpg-win64
+          asset_path: ./release-assets/love2d-td-rpg-win64.zip
           asset_name: love2d-td-rpg-win64.zip
           asset_content_type: application/zip
 
@@ -96,6 +99,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./release-assets/love2d-td-rpg-love-file
+          asset_path: ./release-assets/love2d-td-rpg-love-file.zip
           asset_name: love2d-td-rpg-love-file.zip
           asset_content_type: application/zip
