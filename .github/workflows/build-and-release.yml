@@ -67,20 +67,21 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           script: |
+            const fs = require('fs');
             const tag = '${{ github.ref }}'.replace('refs/tags/', '');
             const release = await github.rest.repos.getReleaseByTag({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag,
             });
-            core.setOutput('upload_url', release.data.upload_url);
+            fs.writeFileSync(process.env.GITHUB_ENV, `upload_url=${release.data.upload_url}\n`);
 
       - name: Upload macOS binary
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          upload_url: ${{ env.upload_url }}
           asset_path: ./release-assets/love2d-td-rpg_macos.zip
           asset_name: love2d-td-rpg_macos.zip
           asset_content_type: application/zip
@@ -90,7 +91,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          upload_url: ${{ env.upload_url }}
           asset_path: ./release-assets/love2d-td-rpg_win64.zip
           asset_name: love2d-td-rpg_win64.zip
           asset_content_type: application/zip
@@ -100,7 +101,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          upload_url: ${{ env.upload_url }}
           asset_path: ./release-assets/love2d-td-rpg.love
           asset_name: love2d-td-rpg.love
           asset_content_type: application/zip
