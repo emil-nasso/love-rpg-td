@@ -5,7 +5,7 @@ on:
     tags:
       - 'v*.*.*'  # Adjust this pattern as needed to match your versioning scheme
     branches:
-      - "*"  # Adjust this if your default branch is named differently
+      - main  # Adjust this if your default branch is named differently  
   pull_request:
 
 jobs:
@@ -61,7 +61,31 @@ jobs:
           name: love2d-td-rpg-love-file
           path: ./release-assets
 
+      - name: Check if release exists
+        id: check_release
+        uses: actions/github-script@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          script: |
+            const tag = '${{ github.ref }}'.replace('refs/tags/', '');
+            try {
+              const release = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag,
+              });
+              return { id: release.data.id, upload_url: release.data.upload_url };
+            } catch (error) {
+              if (error.status === 404) {
+                return { id: null, upload_url: null };
+              } else {
+                throw error;
+              }
+            }
+
       - name: Create GitHub release
+        if: steps.check_release.outputs.id == null
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -74,10 +98,14 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Set upload URL for existing release
+        if: steps.check_release.outputs.id != null
+        run: echo "::set-output name=upload_url::${{ steps.check_release.outputs.upload_url }}"
+
       - name: Upload macOS binary
         uses: actions/upload-release-asset@v1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url || steps.check_release.outputs.upload_url }}
           asset_path: ./release-assets/love2d-td-rpg-macos
           asset_name: love2d-td-rpg-macos.zip
           asset_content_type: application/zip
@@ -85,7 +113,7 @@ jobs:
       - name: Upload Windows 64-bit binary
         uses: actions/upload-release-asset@v1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url || steps.check_release.outputs.upload_url }}
           asset_path: ./release-assets/love2d-td-rpg-win64
           asset_name: love2d-td-rpg-win64.zip
           asset_content_type: application/zip
@@ -93,7 +121,7 @@ jobs:
       - name: Upload .love file
         uses: actions/upload-release-asset@v1
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url || steps.check_release.outputs.upload_url }}
           asset_path: ./release-assets/love2d-td-rpg-love-file
           asset_name: love2d-td-rpg-love-file.zip
           asset_content_type: application/zip
