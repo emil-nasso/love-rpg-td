@@ -18,19 +18,19 @@ jobs:
         with:
           app_name: 'love2d-td-rpg'
           love_version: '11.4'
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: love2d-td-rpg-macos
           path: ${{ steps.love-build.outputs.macos-filename }}
-      #- uses: actions/upload-artifact@v1
+      #- uses: actions/upload-artifact@v2
       #  with:
       #    name: love2d-td-rpg-win32
       #    path: ${{ steps.love-build.outputs.win32-filename }}
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: love2d-td-rpg-win64
           path: ${{ steps.love-build.outputs.win64-filename }}
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: love2d-td-rpg-love-file
           path: ${{ steps.love-build.outputs.love-filename }}
@@ -81,6 +81,8 @@ jobs:
 
       - name: Upload macOS binary
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./release-assets/love2d-td-rpg_macos.zip
@@ -89,6 +91,8 @@ jobs:
 
       - name: Upload Windows 64-bit binary
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./release-assets/love2d-td-rpg_win64.zip
@@ -97,6 +101,8 @@ jobs:
 
       - name: Upload .love file
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./release-assets/love2d-td-rpg.love
