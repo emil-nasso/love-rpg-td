@@ -1,0 +1,69 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download artifacts from build
+        uses: actions/download-artifact@v2
+        with:
+          name: love2d-td-rpg-macos
+          path: ./release-assets
+
+      - name: Download artifacts from build
+        uses: actions/download-artifact@v2
+        with:
+          name: love2d-td-rpg-win64
+          path: ./release-assets
+
+      - name: Download artifacts from build
+        uses: actions/download-artifact@v2
+        with:
+          name: love2d-td-rpg-love-file
+          path: ./release-assets
+
+      - name: Create GitHub release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Release for version ${{ github.ref }}.
+          draft: false
+          prerelease: false
+
+      - name: Upload macOS binary
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release-assets/love2d-td-rpg-macos
+          asset_name: love2d-td-rpg-macos
+          asset_content_type: application/zip
+
+      - name: Upload Windows 64-bit binary
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release-assets/love2d-td-rpg-win64
+          asset_name: love2d-td-rpg-win64
+          asset_content_type: application/zip
+
+      - name: Upload .love file
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release-assets/love2d-td-rpg-love-file
+          asset_name: love2d-td-rpg-love-file
+          asset_content_type: application/zip
