@@ -4,21 +4,24 @@ Just a little experient with a Tower Defence Role Playing like game to learn lov
 
 ## Do a release
 
-Check what the last version was (in the main branch):
+Create a release in github, following semver for the versioning, and a workflow will automatically build and add build artifacts to the release.
 
-```
-git log
-```
+## Todo
 
-Tag the latest commit in the current branch:
-
-```
-git tag v0.0.1
-```
-
-Push that tag:
-
-```
-git push origin v0.0.1
-```
-
+* break out button to class
+* get rid of x and y on player
+* font helper in Ui
+* basic version of turret deploying
+* Sort out :new vs .new and make managers "singletons"
+* use position everywhere, instead of x + y vars
+* Equipment system
+* Attack animations for spiders
+* Damage to player, respawning
+* Healing spell
+* Arrow graphics for projectils. StoneSoup/effects
+* Mob spawners
+* Map extension
+* NPC system. Dialogs
+* Quest system
+* Save/state/progress system
+* Event logger. "You picked up 10 gold". "Congratulations! You are now level 12."
