@@ -68,7 +68,7 @@ jobs:
         id: get_release
         uses: actions/github-script@v5
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           script: |
             const tag = '${{ github.ref }}'.replace('refs/tags/', '');
