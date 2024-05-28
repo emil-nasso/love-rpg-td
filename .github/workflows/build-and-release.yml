@@ -5,7 +5,7 @@ on:
     tags:
       - 'v*.*.*'  # Adjust this pattern as needed to match your versioning scheme
     branches:
-      - main  # Adjust this if your default branch is named differently
+      - '**'  # This will trigger on all branches
   pull_request:
 
 jobs:
@@ -74,7 +74,7 @@ jobs:
               repo: context.repo.repo,
               tag,
             });
-            return { upload_url: release.data.upload_url };
+            core.setOutput('upload_url', release.data.upload_url);
 
       - name: Upload macOS binary
         uses: actions/upload-release-asset@v1
@@ -96,4 +96,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./release-assets/love2d-
+          asset_path: ./release-assets/love2d-td-rpg-love-file
+          asset_name: love2d-td-rpg-love-file.zip
+          asset_content_type: application/zip
