@@ -34,7 +34,7 @@ function Player:load()
 
     self.anim = self.animations.left
 
-    self.physics.body = love.physics.newBody(World, 100, 100, "dynamic")
+    self.physics.body = love.physics.newBody(World, 250, 850, "dynamic")
     self.physics.shape = love.physics.newCircleShape(10)
     self.physics.fixture = love.physics.newFixture(self.physics.body, self.physics.shape, 1)
     self.physics.fixture:setUserData({type = 'player'})
