@@ -10,18 +10,6 @@ CollisionCategories = {
 }
 
 function love.load()
-    math.randomseed(os.time())
-    love.window.setTitle("Emils gejm")
-    love.window.setMode(800, 600, { resizable = false })
-    love.graphics.setDefaultFilter("nearest", "nearest")
-
-    love.physics.setMeter(32)
-    World = love.physics.newWorld(0, 0, true)
-    World:setCallbacks(beginContact, endContact)
-
-    Timer = require 'libraries/hump/timer'
-    Map = (require 'libraries/sti')('map.lua')
-
     require 'player'
     require 'ui'
     require 'effects'
@@ -32,40 +20,21 @@ function love.load()
     require 'npcs'
     require 'projectiles'
 
-    Player:load()
-    Ui:load()
-    Mobs:load()
-    Items:load()
-    Npcs:load()
+    math.randomseed(os.time())
+    love.window.setTitle("Emils gejm")
+    love.window.setMode(800, 600, { resizable = false })
+    love.graphics.setDefaultFilter("nearest", "nearest")
 
+    love.physics.setMeter(32)
+    World = love.physics.newWorld(0, 0, true)
+    World:setCallbacks(beginContact, endContact)
+
+    Mobs:load()
     Spider = (require 'mobs/spider')
     Gold = (require 'items/gold')
-    -- TODO: No constructors needed for the dialogs
-    LootDialog = (require 'ui/loot-dialog'):new()
-    DeployTurretDialog = (require 'ui/deploy-turret-dialog'):new()
-    DialogueDialog = (require 'ui/dialogue-dialog'):new()
 
-    for x = 1, 5, 1 do
-        for y = 1, 5, 1 do
-            Spider.spawn(300 + (x*25), 300 + (y*25))
-        end
-    end
-
-    local spriteLayer = Map.layers["Sprites"]
-    spriteLayer.player = Player
-
-    spriteLayer.draw = function(self)
-        Items:drawGroundItems()
-        Player.anim:draw(Player.spriteSheet, Player:getX(), Player:getY(), nil, 2, nil, 6, 9)
-        Mobs:draw()
-        Turrets:draw()
-        Npcs:draw()
-        Projectiles:draw()
-    end
-
-    spriteLayer.update = function(self, dt)
-        Player:update(dt)
-    end
+    Timer = require 'libraries/hump/timer'
+    Map = (require 'libraries/sti')('map.lua')
 
     for _, object in pairs(Map.layers["HighTerrain"].objects) do
         local body = love.physics.newBody(World, object.x + object.width/2, object.y + object.height/2, "static")
@@ -84,12 +53,55 @@ function love.load()
         fixture:setUserData({type='low-terrain'})
     end
 
+    local playerStartPosition = Vector()
+    local gunnarStartPosition = Vector()
+    for _, object in pairs(Map.layers["Spawns"].objects) do
+        if object.properties.type == 'player' then
+            playerStartPosition = Vector(object.x, object.y)
+        end
+
+        if object.properties.type == 'npc' then
+            gunnarStartPosition = Vector(object.x, object.y)
+        end
+
+        if object.properties.type == 'spider' then
+            Spider.spawn(object.x, object.y)
+        end
+    end
+
     Map:removeLayer("HighTerrain")
     Map:removeLayer("LowTerrain")
+    Map:removeLayer("Spawns")
+
+    Player:load(playerStartPosition)
+    Ui:load()
+    Items:load()
+    Npcs:load(gunnarStartPosition)
+
+    -- TODO: No constructors needed for the dialogs
+    LootDialog = (require 'ui/loot-dialog'):new()
+    DeployTurretDialog = (require 'ui/deploy-turret-dialog'):new()
+    DialogueDialog = (require 'ui/dialogue-dialog'):new()
+
+    local spriteLayer = Map.layers["Sprites"]
+    spriteLayer.player = Player
+
+    spriteLayer.draw = function(self)
+        Items:drawGroundItems()
+        Player.anim:draw(Player.spriteSheet, Player:getX(), Player:getY(), nil, 2, nil, 6, 9)
+        Mobs:draw()
+        Turrets:draw()
+        Npcs:draw()
+        Projectiles:draw()
+    end
+
+    spriteLayer.update = function(self, dt)
+        Player:update(dt)
+    end
 end
 
 function love.update(dt)
-    --require("libraries/lovebird/lovebird").update()
+    require("libraries/lovebird/lovebird").update()
     Map:update(dt)
     Mobs:move(dt)
     Ui:update(dt)

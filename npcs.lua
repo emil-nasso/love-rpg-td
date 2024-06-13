@@ -3,15 +3,14 @@ Npcs = {
 }
 Npcs.__index = Npcs
 
-function Npcs:load()
-    local pos = Vector(200, 50)
+function Npcs:load(gunnarPosition)
     local physics = {}
-    physics.body = love.physics.newBody(World, pos.x, pos.y, "static")
+    physics.body = love.physics.newBody(World, gunnarPosition.x, gunnarPosition.y, "static")
     physics.shape = love.physics.newCircleShape(20)
     physics.fixture = love.physics.newFixture(physics.body, physics.shape)
     physics.fixture:setUserData({type = 'npc'})
     self:add({
-        pos = pos,
+        pos = gunnarPosition,
         r = 20,
         name = "Gunnar",
         sprite = love.graphics.newImage('sprites/StoneSoup/monster/boggart_new.png'),
@@ -48,6 +47,9 @@ end
 function Npcs:draw()
     local mouse = Ui:mouseWorldPositionVector()
     for _, npc in pairs(self.npcs) do
+
+        Ui:setColor(Ui.colors.white)
+        love.graphics.rectangle('fill', npc.pos.x - 22, npc.pos.y - 35, 45, 14)
         love.graphics.setFont(Ui.fonts.boldSmall)
         Ui:setColor(Ui.colors.black)
         love.graphics.print(npc.name, npc.pos.x - 20, npc.pos.y - 35)

@@ -22,7 +22,7 @@ Player = {
 }
 Player.__index = Player
 
-function Player:load()
+function Player:load(startPosition)
     self.spriteSheet = love.graphics.newImage('sprites/player-sheet.png')
     self.grid = Anim8.newGrid(12, 18, self.spriteSheet:getWidth(), self.spriteSheet:getHeight())
 
@@ -34,7 +34,7 @@ function Player:load()
 
     self.anim = self.animations.left
 
-    self.physics.body = love.physics.newBody(World, 250, 850, "dynamic")
+    self.physics.body = love.physics.newBody(World, startPosition.x, startPosition.y, "dynamic")
     self.physics.shape = love.physics.newCircleShape(10)
     self.physics.fixture = love.physics.newFixture(self.physics.body, self.physics.shape, 1)
     self.physics.fixture:setUserData({type = 'player'})
