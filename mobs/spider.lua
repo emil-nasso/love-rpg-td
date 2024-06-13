@@ -8,11 +8,12 @@ Spider.__index = Spider
 Spider.spriteSheet = love.graphics.newImage('sprites/LPC_Spiders/spider01.png')
 Spider.grid = Anim8.newGrid(64, 64, Spider.spriteSheet:getWidth(), Spider.spriteSheet:getHeight())
 
-function Spider.spawn(x, y)
+function Spider.spawn(x, y, spawner)
     local spider = {
         health=100,
         movementV=Vector(0, 0),
         animations={},
+        spawner=spawner,
     }
 
     spider.animations.up = Anim8.newAnimation(Spider.grid('5-10', 1), 0.2)
@@ -46,6 +47,7 @@ function Spider:hit(damage)
         Gold.spawn(math.random(1, 10), self.body:getX() + 16, self.body:getY() + 16)
         Player:gainXp(10)
         Mobs:remove(self)
+        self.spawner.spawned = self.spawner.spawned - 1
     end
 end
 

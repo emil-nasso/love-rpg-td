@@ -8,6 +8,7 @@ Create a release in github, following semver for the versioning, and a workflow 
 
 ## Todo
 
+* fix gold pickup bug. same gold can be picked up multiple using E-feature
 * move debug drawing to layer in STI do avoid having to offset
 * fix turrent placement location bug
 * implement mob spawners

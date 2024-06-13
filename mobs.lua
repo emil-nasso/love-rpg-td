@@ -17,11 +17,36 @@ function Mobs:remove(mob)
     end
 end
 
-function Mobs:addSpawner(pos, radius)
-    table.insert(self.spawners, {
+function Mobs:addSpawner(mobType, count, pos, radius)
+    local spawner = {
         pos = pos,
         radius = radius,
-    })
+        mobType = mobType,
+        count = count,
+        spawned = count,
+        timer = nil,
+    }
+    table.insert(self.spawners, spawner)
+
+    -- Move to spider class, :randomSpawn
+    for i = 1, count do
+        local angle = math.random() * math.pi * 2
+        local distance = math.random() * radius
+        local x = pos.x + math.cos(angle) * distance
+        local y = pos.y + math.sin(angle) * distance
+        Spider.spawn(x, y, spawner)
+    end
+
+    spawner.timer = Timer.every(2, function()
+        if (spawner.spawned < spawner.count) then
+            local angle = math.random() * math.pi * 2
+            local distance = math.random() * radius
+            local x = pos.x + math.cos(angle) * distance
+            local y = pos.y + math.sin(angle) * distance
+            Spider.spawn(x, y, spawner)
+            spawner.spawned = spawner.spawned + 1
+        end
+    end)
 end
 
 function Mobs:add(mob)

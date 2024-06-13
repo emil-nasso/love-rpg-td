@@ -69,9 +69,13 @@ function love.load()
         end
 
         if object.properties.type == 'spawner' then
-            XYZ = object
             local radius = object.width / 2
-            Mobs:addSpawner(Vector(object.x + radius, object.y + radius), radius)
+            Mobs:addSpawner(
+                object.properties.mob_type,
+                object.properties.count,
+                Vector(object.x + radius, object.y + radius),
+                radius
+            )
         end
     end
 
