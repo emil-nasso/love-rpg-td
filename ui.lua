@@ -192,6 +192,15 @@ function Ui:drawMobsDebug(offsetX, offsetY)
             mob.body:getY() + offsetY + mob.movementV.y * 25
         )
     end
+
+    -- Draw spawners
+    for index, spawner in pairs(Mobs.spawners) do
+        DrawingSpawners = true
+        Ui:setColor(Ui.colors.red)
+        love.graphics.circle("line", spawner.pos.x + offsetX, spawner.pos.y + offsetY, spawner.radius)
+    end
+
+    Ui:setColor(nil)
 end
 
 function Ui:addDebugMessage(message)

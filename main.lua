@@ -67,6 +67,12 @@ function love.load()
         if object.properties.type == 'spider' then
             Spider.spawn(object.x, object.y)
         end
+
+        if object.properties.type == 'spawner' then
+            XYZ = object
+            local radius = object.width / 2
+            Mobs:addSpawner(Vector(object.x + radius, object.y + radius), radius)
+        end
     end
 
     Map:removeLayer("HighTerrain")

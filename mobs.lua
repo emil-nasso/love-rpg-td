@@ -1,5 +1,6 @@
 Mobs = {
     mobs = {},
+    spawners = {},
 }
 Mobs.__index = Mobs
 
@@ -14,6 +15,13 @@ function Mobs:remove(mob)
             break
         end
     end
+end
+
+function Mobs:addSpawner(pos, radius)
+    table.insert(self.spawners, {
+        pos = pos,
+        radius = radius,
+    })
 end
 
 function Mobs:add(mob)

@@ -8,8 +8,11 @@ Create a release in github, following semver for the versioning, and a workflow 
 
 ## Todo
 
+* move debug drawing to layer in STI do avoid having to offset
+* fix turrent placement location bug
+* implement mob spawners
+* implement hotkey + click on location - turrent placements
 * break out button to class
-* get rid of x and y on player
 * font helper in Ui
 * basic version of turret deploying
 * Sort out :new vs .new and make managers "singletons"
