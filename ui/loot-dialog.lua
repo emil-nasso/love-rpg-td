@@ -3,8 +3,7 @@ LootDialog.__index = LootDialog
 
 function LootDialog:new()
     local dialog = {
-        x = 200,
-        y = 100,
+        position = Vector(200, 100),
         w = 400,
         h = 300,
         items = {},
@@ -23,6 +22,8 @@ end
 function LootDialog:open(items)
     local row = 0
     local col = 0
+    self.items = {}
+
     for index, item in pairs(items) do
         table.insert(self.items, {
             item = item,
@@ -40,11 +41,11 @@ function LootDialog:open(items)
 end
 
 function LootDialog:atX(x)
-    return x + self.x
+    return x + self.position.x
 end
 
 function LootDialog:atY(y)
-    return y + self.y
+    return y + self.position.y
 end
 
 function LootDialog:gridCoord(col, row)

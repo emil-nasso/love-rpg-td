@@ -47,7 +47,9 @@ function Spider:hit(damage)
         Gold.spawn(math.random(1, 10), self.body:getX() + 16, self.body:getY() + 16)
         Player:gainXp(10)
         Mobs:remove(self)
-        self.spawner.spawned = self.spawner.spawned - 1
+        if (self.spawner) then
+            self.spawner.spawned = self.spawner.spawned - 1
+        end
     end
 end
 

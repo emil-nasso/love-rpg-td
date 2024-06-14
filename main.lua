@@ -14,7 +14,7 @@ function love.load()
     require 'ui'
     require 'effects'
     require 'mobs'
-    require 'Items'
+    require 'items'
     require 'cursors'
     require 'turrets'
     require 'npcs'
@@ -22,7 +22,7 @@ function love.load()
 
     math.randomseed(os.time())
     love.window.setTitle("Emils gejm")
-    love.window.setMode(800, 600, { resizable = false })
+    love.window.setMode(1600, 900, { resizable = false })
     love.graphics.setDefaultFilter("nearest", "nearest")
 
     love.physics.setMeter(32)
@@ -90,7 +90,6 @@ function love.load()
 
     -- TODO: No constructors needed for the dialogs
     LootDialog = (require 'ui/loot-dialog'):new()
-    DeployTurretDialog = (require 'ui/deploy-turret-dialog'):new()
     DialogueDialog = (require 'ui/dialogue-dialog'):new()
 
     local spriteLayer = Map.layers["Sprites"]
@@ -119,6 +118,7 @@ function love.update(dt)
     Effects:update(dt)
     Items:update(dt)
     Projectiles:update(dt)
+    Turrets:update(dt)
 end
 
 function love.draw()
@@ -163,7 +163,13 @@ end
 function love.mousepressed(x, y, button)
     local cameraPosition = Ui:getCameraPosition()
     local worldPosition = Vector(x, y) + cameraPosition
+    local mousePosition = Vector(x, y)
     local npc = Npcs:getNpcAt(worldPosition)
+
+    if (love.keyboard.isDown('1')) then
+        Turrets:deployShooter(mousePosition)
+        return
+    end
 
     if (OpenDialog) then
         OpenDialog:mousePressed(x, y, button)
@@ -174,10 +180,6 @@ function love.mousepressed(x, y, button)
         Ui:mouseMoved()
         if (button == 1) then
             Player:startShooting()
-        elseif (button == 2) then
-            if (OpenDialog == nil) then
-                DeployTurretDialog:open(Ui:mousePositionVector())
-            end
         end
     end
 end

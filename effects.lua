@@ -57,6 +57,7 @@ end
 
 function Effects:draw(offsetX, offsetY)
     local screenH = love.graphics.getHeight()
+    local screenW = love.graphics.getWidth()
     for i, effect in ipairs(self.effects) do
         if effect.completed then
             table.remove(self.effects, i)
@@ -75,7 +76,7 @@ function Effects:draw(offsetX, offsetY)
             elseif (effect.type == 'hero') then
                 love.graphics.setFont(Ui.fonts.boldMedium)
                 Ui:setColor(Ui.colors.white, effect.opacity)
-                love.graphics.printf(effect.text, 0, screenH / 2, 800, 'center')
+                love.graphics.printf(effect.text, 0, screenH / 2 - 100, screenW, 'center')
             end
         end
     end
