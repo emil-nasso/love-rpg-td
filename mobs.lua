@@ -1,6 +1,12 @@
 Mobs = {
     mobs = {},
     spawners = {},
+    graphics = {
+        spawner = {
+            sprite = love.graphics.newImage('sprites/spawner.png'),
+            grid = Anim8.newGrid(32, 32, 224, 32),
+        }
+    }
 }
 Mobs.__index = Mobs
 
@@ -25,6 +31,7 @@ function Mobs:addSpawner(mobType, count, pos, radius)
         count = count,
         spawned = count,
         timer = nil,
+        animation = Anim8.newAnimation(self.graphics.spawner.grid('1-7', 1), 0.2),
     }
     table.insert(self.spawners, spawner)
 
@@ -59,6 +66,12 @@ function Mobs:move(dt)
     end
 end
 
+function Mobs:update(dt)
+    for index, spawner in pairs(self.spawners) do
+        spawner.animation:update(dt)
+    end
+end
+
 function Mobs:ClosestTo(x, y)
     local closestMob = nil
     local closestDistance = 9999999
@@ -90,7 +103,8 @@ function Mobs:applyShockwave(x, y)
     end
 end
 
-function Mobs:draw()
+function Mobs:drawMobs()
+    -- Draw mobs
     for index, mob in pairs(self.mobs) do
         Ui:setColor(nil)
         mob.animation:draw(mob.spriteSheet, mob.body:getX(), mob.body:getY(), nil, 1, nil, 32, 32)
@@ -101,6 +115,14 @@ function Mobs:draw()
             Ui:setColor(Ui.colors.red)
             love.graphics.rectangle("fill", mob.body:getX() - 19, mob.body:getY() - 24, 38 * (mob.health/mob.maxHealth), 4)
         end
+    end
+end
+
+function Mobs:drawSpawners()
+    Ui:setColor(nil)
+    -- Draw spawner animations
+    for index, spawner in pairs(self.spawners) do
+        spawner.animation:draw(self.graphics.spawner.sprite, spawner.pos.x, spawner.pos.y, nil, 1, nil, 32, 32)
     end
 end
 

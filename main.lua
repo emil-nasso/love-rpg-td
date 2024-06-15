@@ -96,9 +96,10 @@ function love.load()
     spriteLayer.player = Player
 
     spriteLayer.draw = function(self)
+        Mobs:drawSpawners()
         Items:drawGroundItems()
         Player.anim:draw(Player.spriteSheet, Player:getX(), Player:getY(), nil, 2, nil, 6, 9)
-        Mobs:draw()
+        Mobs:drawMobs()
         Turrets:draw()
         Npcs:draw()
         Projectiles:draw()
@@ -119,6 +120,7 @@ function love.update(dt)
     Items:update(dt)
     Projectiles:update(dt)
     Turrets:update(dt)
+    Mobs:update(dt)
 end
 
 function love.draw()
