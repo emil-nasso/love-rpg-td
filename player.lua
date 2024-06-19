@@ -40,6 +40,10 @@ function Player:load(startPosition)
     self.physics.fixture:setUserData({type = 'player'})
 end
 
+function Player:levelProgress()
+    return (self.xp - self.currentLevelXp) / (self.nextLevelXp - self.currentLevelXp)
+end
+
 function Player:vector()
     return Vector(self:getX(), self:getY())
 end
@@ -124,20 +128,23 @@ function Player:update(dt)
     local movingSpeed = Player.speed
     self.movingDirection = Vector(0, 0)
 
+    self.movingDirection.x = 0
+    self.movingDirection.y = 0
+
     if love.keyboard.isDown("d") then
-        self.movingDirection.x = 1
+        self.movingDirection.x = self.movingDirection.x + 1
     end
 
     if love.keyboard.isDown("a") then
-        self.movingDirection.x = -1
+        self.movingDirection.x = self.movingDirection.x - 1
     end
 
     if love.keyboard.isDown("s") then
-        self.movingDirection.y = 1
+        self.movingDirection.y = self.movingDirection.y + 1
     end
 
     if love.keyboard.isDown("w") then
-        self.movingDirection.y = -1
+        self.movingDirection.y = self.movingDirection.y - 1
     end
 
     self.movingDirection:normalizeInplace()

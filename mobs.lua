@@ -1,5 +1,12 @@
 Mobs = {
     mobs = {},
+    spawners = {},
+    graphics = {
+        spawner = {
+            sprite = love.graphics.newImage('sprites/spawner.png'),
+            grid = Anim8.newGrid(32, 32, 224, 32),
+        }
+    }
 }
 Mobs.__index = Mobs
 
@@ -16,6 +23,39 @@ function Mobs:remove(mob)
     end
 end
 
+function Mobs:addSpawner(mobType, count, pos, radius)
+    local spawner = {
+        pos = pos,
+        radius = radius,
+        mobType = mobType,
+        count = count,
+        spawned = count,
+        timer = nil,
+        animation = Anim8.newAnimation(self.graphics.spawner.grid('1-7', 1), 0.2),
+    }
+    table.insert(self.spawners, spawner)
+
+    -- Move to spider class, :randomSpawn
+    for i = 1, count do
+        local angle = math.random() * math.pi * 2
+        local distance = math.random() * radius
+        local x = pos.x + math.cos(angle) * distance
+        local y = pos.y + math.sin(angle) * distance
+        Spider.spawn(x, y, spawner)
+    end
+
+    spawner.timer = Timer.every(2, function()
+        if (spawner.spawned < spawner.count) then
+            local angle = math.random() * math.pi * 2
+            local distance = math.random() * radius
+            local x = pos.x + math.cos(angle) * distance
+            local y = pos.y + math.sin(angle) * distance
+            Spider.spawn(x, y, spawner)
+            spawner.spawned = spawner.spawned + 1
+        end
+    end)
+end
+
 function Mobs:add(mob)
     table.insert(self.mobs, mob)
 end
@@ -23,6 +63,12 @@ end
 function Mobs:move(dt)
     for _, mob in pairs(self.mobs) do
         mob:move(dt)
+    end
+end
+
+function Mobs:update(dt)
+    for index, spawner in pairs(self.spawners) do
+        spawner.animation:update(dt)
     end
 end
 
@@ -57,7 +103,8 @@ function Mobs:applyShockwave(x, y)
     end
 end
 
-function Mobs:draw()
+function Mobs:drawMobs()
+    -- Draw mobs
     for index, mob in pairs(self.mobs) do
         Ui:setColor(nil)
         mob.animation:draw(mob.spriteSheet, mob.body:getX(), mob.body:getY(), nil, 1, nil, 32, 32)
@@ -71,4 +118,12 @@ function Mobs:draw()
     end
 end
 
-return Mobs
+function Mobs:drawSpawners()
+    Ui:setColor(nil)
+    -- Draw spawner animations
+    for index, spawner in pairs(self.spawners) do
+        spawner.animation:draw(self.graphics.spawner.sprite, spawner.pos.x, spawner.pos.y, nil, 1, nil, 32, 32)
+    end
+end
+
+return Mobs3

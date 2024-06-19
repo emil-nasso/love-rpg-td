@@ -1,4 +1,11 @@
 require('helpers')
+
+WORLD_WIDTH=1300
+WORLD_HEIGHT=900
+WINDOW_WIDTH=1600
+WINDOW_HEIGHT=900
+SIDEBAR_LEFT=1300
+
 Anim8 = require 'libraries/anim8/anim8'
 Vector = require 'libraries/hump/vector'
 OpenDialog = nil
@@ -14,7 +21,7 @@ function love.load()
     require 'ui'
     require 'effects'
     require 'mobs'
-    require 'Items'
+    require 'items'
     require 'cursors'
     require 'turrets'
     require 'npcs'
@@ -22,7 +29,7 @@ function love.load()
 
     math.randomseed(os.time())
     love.window.setTitle("Emils gejm")
-    love.window.setMode(800, 600, { resizable = false })
+    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, { resizable = false })
     love.graphics.setDefaultFilter("nearest", "nearest")
 
     love.physics.setMeter(32)
@@ -35,6 +42,7 @@ function love.load()
 
     Timer = require 'libraries/hump/timer'
     Map = (require 'libraries/sti')('map.lua')
+    Map:resize(WORLD_WIDTH, WORLD_HEIGHT)
 
     for _, object in pairs(Map.layers["HighTerrain"].objects) do
         local body = love.physics.newBody(World, object.x + object.width/2, object.y + object.height/2, "static")
@@ -67,6 +75,16 @@ function love.load()
         if object.properties.type == 'spider' then
             Spider.spawn(object.x, object.y)
         end
+
+        if object.properties.type == 'spawner' then
+            local radius = object.width / 2
+            Mobs:addSpawner(
+                object.properties.mob_type,
+                object.properties.count,
+                Vector(object.x + radius, object.y + radius),
+                radius
+            )
+        end
     end
 
     Map:removeLayer("HighTerrain")
@@ -80,16 +98,16 @@ function love.load()
 
     -- TODO: No constructors needed for the dialogs
     LootDialog = (require 'ui/loot-dialog'):new()
-    DeployTurretDialog = (require 'ui/deploy-turret-dialog'):new()
     DialogueDialog = (require 'ui/dialogue-dialog'):new()
 
     local spriteLayer = Map.layers["Sprites"]
     spriteLayer.player = Player
 
     spriteLayer.draw = function(self)
+        Mobs:drawSpawners()
         Items:drawGroundItems()
         Player.anim:draw(Player.spriteSheet, Player:getX(), Player:getY(), nil, 2, nil, 6, 9)
-        Mobs:draw()
+        Mobs:drawMobs()
         Turrets:draw()
         Npcs:draw()
         Projectiles:draw()
@@ -97,6 +115,20 @@ function love.load()
 
     spriteLayer.update = function(self, dt)
         Player:update(dt)
+    end
+
+    -- Add debug layer
+    Map:addCustomLayer("Debug", #Map.layers + 1)
+    local debugLayer = Map.layers["Debug"]
+
+    function debugLayer:draw()
+        --local camera = Ui:getCameraPosition()
+        if (Ui.showDebug) then
+            Ui:drawDebug(0, 0)
+
+            Ui:drawMobsDebug(0, 0)
+            Ui:drawPhysics(0, 0)
+        end
     end
 end
 
@@ -109,6 +141,8 @@ function love.update(dt)
     Effects:update(dt)
     Items:update(dt)
     Projectiles:update(dt)
+    Turrets:update(dt)
+    Mobs:update(dt)
 end
 
 function love.draw()
@@ -121,6 +155,8 @@ function love.draw()
     if (OpenDialog) then
         OpenDialog:draw()
     end
+
+    Ui:drawSidebar()
 
     Ui:setColor(nil)
 
@@ -153,7 +189,13 @@ end
 function love.mousepressed(x, y, button)
     local cameraPosition = Ui:getCameraPosition()
     local worldPosition = Vector(x, y) + cameraPosition
+    local mousePosition = Vector(x, y)
     local npc = Npcs:getNpcAt(worldPosition)
+
+    if (love.keyboard.isDown('1')) then
+        Turrets:deployShooter(mousePosition)
+        return
+    end
 
     if (OpenDialog) then
         OpenDialog:mousePressed(x, y, button)
@@ -164,10 +206,6 @@ function love.mousepressed(x, y, button)
         Ui:mouseMoved()
         if (button == 1) then
             Player:startShooting()
-        elseif (button == 2) then
-            if (OpenDialog == nil) then
-                DeployTurretDialog:open(Ui:mousePositionVector())
-            end
         end
     end
 end

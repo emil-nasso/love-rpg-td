@@ -17,10 +17,12 @@ Ui = {
         boldLarge = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 24),
     },
     sprites = {
-        sprint = love.graphics.newImage('sprites/StoneSoup/gui/spells/air/swiftness_new.png'),
-        shotgun = love.graphics.newImage('sprites/StoneSoup/gui/spells/earth/sandblast_new.png'),
-        shockwave = love.graphics.newImage('sprites/StoneSoup/gui/spells/translocation/dispersal_new.png'),
+        shooterTurret = love.graphics.newImage('sprites/shooter-turret-toolbar.png'),
+        sprint = love.graphics.newImage('sprites/sprint-toolbar.png'),
+        shotgun = love.graphics.newImage('sprites/shotgun-toolbar.png'),
+        shockwave = love.graphics.newImage('sprites/shockwave-toolbar.png'),
         heal = love.graphics.newImage('sprites/StoneSoup/gui/spells/necromancy/regeneration_new.png'),
+        sidebar = love.graphics.newImage('sprites/sidebar.png'),
     },
     debugMessages = {},
     showDebug = true,
@@ -80,19 +82,17 @@ function Ui:keyPressed(key)
 end
 
 function Ui:draw(offsetX, offsetY)
-    if (self.showDebug) then
-        self:drawDebug(offsetX, offsetY)
-        self:drawMobsDebug(offsetX, offsetY)
-        self:drawPhysics(offsetX, offsetY)
-    end
-
     local windowH = love.graphics.getHeight()
 
+    -- Player stats
+    Ui:setColor(Ui.colors.white, 0.3)
+    love.graphics.rectangle("fill", 0, windowH - 160, 250, 160, 10, 10)
     love.graphics.setFont(self.fonts.boldMedium)
     Ui:setColor(Ui.colors.black)
     love.graphics.print("Gold: " .. Items.goldCount, 10, windowH - 150)
     love.graphics.print("Level: " .. Player.level, 10, windowH - 125)
 
+    -- Print stats small and simplistic in the sidebar and only show bars in the UI
     local xpProgress = ((Player.xp - Player.currentLevelXp) / (Player.nextLevelXp - Player.currentLevelXp)) * 100
     self:drawPlayerBar(10, windowH - 100, xpProgress, "XP: " .. Player.xp .. "/" .. Player.nextLevelXp, Ui.colors.white)
     self:drawPlayerBar(10, windowH - 75, Player.health, "Health", Ui.colors.red)
@@ -101,36 +101,36 @@ function Ui:draw(offsetX, offsetY)
 
     Ui:setColor(nil)
 
+    -- Toolbar
+
     love.graphics.setFont(self.fonts.boldSmall)
-    love.graphics.draw(self.sprites.sprint, 250, windowH - 50, 0, 1.2)
-    love.graphics.printf("shift", 250, windowH - 15, 32 * 1.2, 'center')
-    if (OpenDialog == nil and love.keyboard.isDown("lshift")) then
-        Ui:setColor(Ui.colors.yellow)
-        love.graphics.rectangle("line", 250, windowH - 50, 32 * 1.2, 32 * 1.2)
-        Ui:setColor(nil)
-    end
 
-    love.graphics.draw(self.sprites.shockwave, 300, windowH - 50, 0, 1.2)
-    love.graphics.printf("space", 300, windowH - 15, 32 * 1.2, 'center')
-    if (OpenDialog == nil and love.keyboard.isDown("space")) then
-        Ui:setColor(Ui.colors.yellow)
-        love.graphics.rectangle("line", 300, windowH - 50, 32 * 1.2, 32 * 1.2)
-        Ui:setColor(nil)
-    end
+    -- Shooter turret
+    self:drawToolbarIcon(self.sprites.shooterTurret, 700, windowH - 100, "1")
 
-    love.graphics.draw(self.sprites.shotgun, 350, windowH - 50, 0, 1.2)
-    love.graphics.printf("2", 350, windowH - 15, 32 * 1.2, 'center')
-    if (OpenDialog == nil and love.keyboard.isDown("2")) then
-        Ui:setColor(Ui.colors.yellow)
-        love.graphics.rectangle("line", 350, windowH - 50, 32 * 1.2, 32 * 1.2)
-        Ui:setColor(nil)
-    end
+    -- Sprint
+    self:drawToolbarIcon(self.sprites.sprint, 750, windowH - 100, "lshift")
 
-    love.graphics.draw(self.sprites.heal, 400, windowH - 50, 0, 1.2)
-    love.graphics.printf("3", 400, windowH - 15, 32 * 1.2, 'center')
-    if (OpenDialog == nil and love.keyboard.isDown("3")) then
+    -- Shockwave
+    self:drawToolbarIcon(self.sprites.shockwave, 800, windowH - 100, "space")
+
+    -- Shotgun
+    self:drawToolbarIcon(self.sprites.shotgun, 850, windowH - 100, "2")
+
+    -- Heal
+    self:drawToolbarIcon(self.sprites.heal, 900, windowH - 100, "3")
+end
+
+function Ui:drawToolbarIcon(sprite, x, y, key)
+    self:setColor(self.colors.black, 0.5)
+    love.graphics.rectangle("fill", x, y, 32, 32)
+    self:setColor(nil)
+
+    love.graphics.draw(sprite, x, y, 0)
+    love.graphics.printf(key, x, y + 35, 32, 'center')
+    if (OpenDialog == nil and love.keyboard.isDown(key)) then
         Ui:setColor(Ui.colors.yellow)
-        love.graphics.rectangle("line", 400, windowH - 50, 32 * 1.2, 32 * 1.2)
+        love.graphics.rectangle("line", x - 2, y - 2, 36, 36)
         Ui:setColor(nil)
     end
 end
@@ -146,6 +146,30 @@ function Ui:drawPlayerBar(x, y, percentage, label, color)
 
     Ui:setColor(Ui.colors.black)
     love.graphics.print(label, x + 115, y)
+end
+
+function Ui:drawSidebarBar(x, y, w, h, percentage, color)
+    Ui:setColor(color)
+    love.graphics.rectangle("fill", x, y, w * percentage, h)
+end
+
+function Ui:drawSidebar()
+    self:setColor(nil)
+    love.graphics.draw(self.sprites.sidebar, SIDEBAR_LEFT, 0)
+
+    local levelProgress = Player:levelProgress()
+    -- Xp progress bar
+    self:drawSidebarBar(SIDEBAR_LEFT + 14, 306, 272, 4, levelProgress, Ui.colors.yellow)
+
+    love.graphics.setFont(Ui.fonts.boldMedium)
+    -- Current level
+    love.graphics.print(Player.level, SIDEBAR_LEFT + 75, 285)
+
+    -- Level progress percentage
+    love.graphics.print(math.floor(levelProgress * 100) .. '%', SIDEBAR_LEFT + 250, 285)
+
+    -- Gold amount
+    love.graphics.print(Items.goldCount, SIDEBAR_LEFT + 67, 9)
 end
 
 function Ui:drawDebug(offsetX, offsetY)
@@ -192,6 +216,15 @@ function Ui:drawMobsDebug(offsetX, offsetY)
             mob.body:getY() + offsetY + mob.movementV.y * 25
         )
     end
+
+    -- Draw spawners
+    for index, spawner in pairs(Mobs.spawners) do
+        DrawingSpawners = true
+        Ui:setColor(Ui.colors.red)
+        love.graphics.circle("line", spawner.pos.x + offsetX, spawner.pos.y + offsetY, spawner.radius)
+    end
+
+    Ui:setColor(nil)
 end
 
 function Ui:addDebugMessage(message)
@@ -265,6 +298,10 @@ function Ui:getCameraPosition()
     end
 
     return camera
+end
+
+function Ui:mousePosition()
+    return Vector(love.mouse.getPosition())
 end
 
 function Ui:mouseMoved()
