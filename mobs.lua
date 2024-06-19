@@ -126,4 +126,4 @@ function Mobs:drawSpawners()
     end
 end
 
-return Mobs
+return Mobs3

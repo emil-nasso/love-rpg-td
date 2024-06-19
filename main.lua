@@ -1,4 +1,11 @@
 require('helpers')
+
+WORLD_WIDTH=1300
+WORLD_HEIGHT=900
+WINDOW_WIDTH=1600
+WINDOW_HEIGHT=900
+SIDEBAR_LEFT=1300
+
 Anim8 = require 'libraries/anim8/anim8'
 Vector = require 'libraries/hump/vector'
 OpenDialog = nil
@@ -22,7 +29,7 @@ function love.load()
 
     math.randomseed(os.time())
     love.window.setTitle("Emils gejm")
-    love.window.setMode(1600, 900, { resizable = false })
+    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, { resizable = false })
     love.graphics.setDefaultFilter("nearest", "nearest")
 
     love.physics.setMeter(32)
@@ -35,6 +42,7 @@ function love.load()
 
     Timer = require 'libraries/hump/timer'
     Map = (require 'libraries/sti')('map.lua')
+    Map:resize(WORLD_WIDTH, WORLD_HEIGHT)
 
     for _, object in pairs(Map.layers["HighTerrain"].objects) do
         local body = love.physics.newBody(World, object.x + object.width/2, object.y + object.height/2, "static")
@@ -108,6 +116,20 @@ function love.load()
     spriteLayer.update = function(self, dt)
         Player:update(dt)
     end
+
+    -- Add debug layer
+    Map:addCustomLayer("Debug", #Map.layers + 1)
+    local debugLayer = Map.layers["Debug"]
+
+    function debugLayer:draw()
+        --local camera = Ui:getCameraPosition()
+        if (Ui.showDebug) then
+            Ui:drawDebug(0, 0)
+
+            Ui:drawMobsDebug(0, 0)
+            Ui:drawPhysics(0, 0)
+        end
+    end
 end
 
 function love.update(dt)
@@ -133,6 +155,8 @@ function love.draw()
     if (OpenDialog) then
         OpenDialog:draw()
     end
+
+    Ui:drawSidebar()
 
     Ui:setColor(nil)
 

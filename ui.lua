@@ -22,6 +22,7 @@ Ui = {
         shotgun = love.graphics.newImage('sprites/shotgun-toolbar.png'),
         shockwave = love.graphics.newImage('sprites/shockwave-toolbar.png'),
         heal = love.graphics.newImage('sprites/StoneSoup/gui/spells/necromancy/regeneration_new.png'),
+        sidebar = love.graphics.newImage('sprites/sidebar.png'),
     },
     debugMessages = {},
     showDebug = true,
@@ -81,16 +82,9 @@ function Ui:keyPressed(key)
 end
 
 function Ui:draw(offsetX, offsetY)
-    if (self.showDebug) then
-        self:drawDebug(offsetX, offsetY)
-        self:drawMobsDebug(offsetX, offsetY)
-        self:drawPhysics(offsetX, offsetY)
-    end
-
     local windowH = love.graphics.getHeight()
 
     -- Player stats
-
     Ui:setColor(Ui.colors.white, 0.3)
     love.graphics.rectangle("fill", 0, windowH - 160, 250, 160, 10, 10)
     love.graphics.setFont(self.fonts.boldMedium)
@@ -98,6 +92,7 @@ function Ui:draw(offsetX, offsetY)
     love.graphics.print("Gold: " .. Items.goldCount, 10, windowH - 150)
     love.graphics.print("Level: " .. Player.level, 10, windowH - 125)
 
+    -- Print stats small and simplistic in the sidebar and only show bars in the UI
     local xpProgress = ((Player.xp - Player.currentLevelXp) / (Player.nextLevelXp - Player.currentLevelXp)) * 100
     self:drawPlayerBar(10, windowH - 100, xpProgress, "XP: " .. Player.xp .. "/" .. Player.nextLevelXp, Ui.colors.white)
     self:drawPlayerBar(10, windowH - 75, Player.health, "Health", Ui.colors.red)
@@ -151,6 +146,30 @@ function Ui:drawPlayerBar(x, y, percentage, label, color)
 
     Ui:setColor(Ui.colors.black)
     love.graphics.print(label, x + 115, y)
+end
+
+function Ui:drawSidebarBar(x, y, w, h, percentage, color)
+    Ui:setColor(color)
+    love.graphics.rectangle("fill", x, y, w * percentage, h)
+end
+
+function Ui:drawSidebar()
+    self:setColor(nil)
+    love.graphics.draw(self.sprites.sidebar, SIDEBAR_LEFT, 0)
+
+    local levelProgress = Player:levelProgress()
+    -- Xp progress bar
+    self:drawSidebarBar(SIDEBAR_LEFT + 14, 306, 272, 4, levelProgress, Ui.colors.yellow)
+
+    love.graphics.setFont(Ui.fonts.boldMedium)
+    -- Current level
+    love.graphics.print(Player.level, SIDEBAR_LEFT + 75, 285)
+
+    -- Level progress percentage
+    love.graphics.print(math.floor(levelProgress * 100) .. '%', SIDEBAR_LEFT + 250, 285)
+
+    -- Gold amount
+    love.graphics.print(Items.goldCount, SIDEBAR_LEFT + 67, 9)
 end
 
 function Ui:drawDebug(offsetX, offsetY)

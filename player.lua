@@ -40,6 +40,10 @@ function Player:load(startPosition)
     self.physics.fixture:setUserData({type = 'player'})
 end
 
+function Player:levelProgress()
+    return (self.xp - self.currentLevelXp) / (self.nextLevelXp - self.currentLevelXp)
+end
+
 function Player:vector()
     return Vector(self:getX(), self:getY())
 end
