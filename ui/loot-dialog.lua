@@ -1,44 +1,32 @@
-LootDialog = {}
-LootDialog.__index = LootDialog
+LootDialog = Class {
+    init = function(self, items)
+        local row = 0
+        local col = 0
+        self.items = {}
 
-function LootDialog:new()
-    local dialog = {
-        position = Vector(200, 100),
-        w = 400,
-        h = 300,
-        items = {},
-        buttons = {},
-    }
+        for index, item in pairs(items) do
+            table.insert(self.items, {
+                item = item,
+                row = row,
+                col = col,
+            })
 
-    dialog.buttons = {
-        {text="Close [esc]", x=160, y=250, w=110, h=40, action=function(self) self:close() end},
-        {text="Loot all [e]", x=280, y=250, w=110, h=40, action=function(self) self:lootAll() end},
-    }
-
-    setmetatable(dialog, LootDialog)
-    return dialog
-end
-
-function LootDialog:open(items)
-    local row = 0
-    local col = 0
-    self.items = {}
-
-    for index, item in pairs(items) do
-        table.insert(self.items, {
-            item = item,
-            row = row,
-            col = col,
-        })
-
-        col = col + 1
-        if (col > 7) then
-            col = 0
-            row = row + 1
+            col = col + 1
+            if (col > 7) then
+                col = 0
+                row = row + 1
+            end
         end
-    end
-    OpenDialog = self
-end
+    end,
+    position = Vector(200, 100),
+    w = 400,
+    h = 300,
+    items = {},
+    buttons = {
+        { text = "Close [esc]", x = 160, y = 250, w = 110, h = 40, action = function(self) self:close() end },
+        { text = "Loot all [e]", x = 280, y = 250, w = 110, h = 40, action = function(self) self:lootAll() end },
+    }
+}
 
 function LootDialog:atX(x)
     return x + self.position.x
@@ -61,12 +49,14 @@ function LootDialog:keyPressed(key)
         self:lootAll()
     end
 end
+
 function LootDialog:lootAll()
     for index, item in pairs(self.items) do
         item.item:pickup()
     end
     self:close()
 end
+
 function LootDialog:close()
     OpenDialog = nil
 end
@@ -103,7 +93,7 @@ function LootDialog:draw()
     local mouseX, mouseY = love.mouse.getPosition()
     -- Border
     Ui:setColor(Ui.colors.lightGray)
-    love.graphics.rectangle('fill', self:atX(-4), self:atY(-4), self.w+8, self.h+8, 6, 6)
+    love.graphics.rectangle('fill', self:atX(-4), self:atY(-4), self.w + 8, self.h + 8, 6, 6)
     love.graphics.setLineWidth(1)
 
     -- Background
@@ -118,14 +108,14 @@ function LootDialog:draw()
     Ui:setColor(Ui.colors.white)
     for col = 0, 7, 1 do
         for row = 0, 3, 1 do
-            local x1, y1, x2, y2  = self:gridCoord(col, row)
+            local x1, y1, x2, y2 = self:gridCoord(col, row)
             if mouseX > x1 and mouseX < x2 and mouseY > y1 and mouseY < y2 then
                 Cursors:setPointerCursor()
                 Ui:setColor(Ui.colors.lightGray)
-                love.graphics.rectangle('fill', x1, y1, x2-x1, y2-y1)
+                love.graphics.rectangle('fill', x1, y1, x2 - x1, y2 - y1)
                 Ui:setColor(Ui.colors.white)
             end
-            love.graphics.rectangle('line', x1, y1, x2-x1, y2-y1)
+            love.graphics.rectangle('line', x1, y1, x2 - x1, y2 - y1)
         end
     end
 
@@ -133,8 +123,8 @@ function LootDialog:draw()
 
     -- Items
     for index, item in pairs(self.items) do
-        local x, y= self:gridCoord(item.col, item.row)
-        love.graphics.draw(item.item.sprite, x+4, y+4)
+        local x, y = self:gridCoord(item.col, item.row)
+        love.graphics.draw(item.item.sprite, x + 4, y + 4)
     end
 
     -- Buttons
@@ -156,7 +146,7 @@ function LootDialog:drawButton(button)
     end
 
     love.graphics.rectangle('line', x, y, button.w, button.h, 6)
-    love.graphics.print(button.text, x+10, y+10)
+    love.graphics.print(button.text, x + 10, y + 10)
 end
 
 return LootDialog

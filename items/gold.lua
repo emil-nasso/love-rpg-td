@@ -1,9 +1,15 @@
-Gold = {
-    type='gold',
-    autoPickup=true,
+Gold = Class {
+    init = function(self, amount, x, y)
+        self.amount = amount
+        self.x = x
+        self.y = y
+        self.sprite = Gold.sprites[amount]
+        Items:addOnGround(self)
+    end,
+    type = 'gold',
+    autoPickup = true,
 }
 
-Gold.__index = Gold
 Gold.sprites = {}
 Gold.sprites[1] = love.graphics.newImage('sprites/StoneSoup/item/gold/gold_pile_1.png')
 Gold.sprites[2] = love.graphics.newImage('sprites/StoneSoup/item/gold/gold_pile_2.png')
@@ -16,21 +22,6 @@ Gold.sprites[8] = love.graphics.newImage('sprites/StoneSoup/item/gold/gold_pile_
 Gold.sprites[9] = love.graphics.newImage('sprites/StoneSoup/item/gold/gold_pile_9.png')
 Gold.sprites[10] = love.graphics.newImage('sprites/StoneSoup/item/gold/gold_pile_10.png')
 
-function Gold.spawn(amount, x, y)
-    local gold = {
-        amount=amount,
-        x=x,
-        y=y,
-        sprite=Gold.sprites[amount],
-    }
-
-    setmetatable(gold, Gold)
-
-    Items:addOnGround(gold)
-
-    return gold
-end
-
 function Gold:vector()
     return Vector(self.x, self.y)
 end
@@ -39,7 +30,7 @@ function Gold:pickup()
     Ui:addDebugMessage("Picking up gold")
 
     Items:removeFromGround(self)
-    Items.goldCount = Items.goldCount + self.amount
+    Player.gold = Player.gold + self.amount
 end
 
 return Gold

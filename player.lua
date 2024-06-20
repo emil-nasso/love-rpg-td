@@ -1,4 +1,4 @@
-Player = {
+Player = Class {
     xp = 0,
     level = 1,
     currentLevelXp = 0,
@@ -13,6 +13,7 @@ Player = {
     viewingAngle = 0,
     viewingDirection = Vector(0, 0),
     movingDirection = Vector(0, 0),
+    gold = 0,
     physics = {
         body = nil,
         shape = nil,
@@ -20,7 +21,6 @@ Player = {
     },
     shootingTimerHandle = nil,
 }
-Player.__index = Player
 
 function Player:load(startPosition)
     self.spriteSheet = love.graphics.newImage('sprites/player-sheet.png')
@@ -37,7 +37,7 @@ function Player:load(startPosition)
     self.physics.body = love.physics.newBody(World, startPosition.x, startPosition.y, "dynamic")
     self.physics.shape = love.physics.newCircleShape(10)
     self.physics.fixture = love.physics.newFixture(self.physics.body, self.physics.shape, 1)
-    self.physics.fixture:setUserData({type = 'player'})
+    self.physics.fixture:setUserData({ type = 'player' })
 end
 
 function Player:levelProgress()

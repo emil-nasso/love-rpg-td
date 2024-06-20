@@ -1,13 +1,42 @@
 require('helpers')
 
-WORLD_WIDTH=1300
-WORLD_HEIGHT=900
-WINDOW_WIDTH=1600
-WINDOW_HEIGHT=900
-SIDEBAR_LEFT=1300
+-- Classes
+Class = require "libraries.hump.class"
+Anim8 = require 'libraries.anim8.anim8'
+Vector = require 'libraries.hump.vector'
+Spider = require 'mobs.spider'
+Gold = require 'items.gold'
+LootDialog = require 'ui.loot-dialog'
+DialogueDialog = require 'ui.dialogue-dialog'
+HeroText = require 'effects.hero-text'
+Explosion = require 'effects.explosion'
+Shockwave = require 'effects.shockwave'
+Shooter = require 'turrets.shooter'
+SpiderSpawner = require 'spawners.spider-spawner'
 
-Anim8 = require 'libraries/anim8/anim8'
-Vector = require 'libraries/hump/vector'
+-- Libraries
+Timer = require 'libraries.hump.timer'
+Map = (require 'libraries.sti')('map.lua')
+
+-- Managers
+Player = (require 'player')()
+Ui = (require 'ui')()
+Effects = (require 'effects')()
+Mobs = (require 'mobs')()
+Items = (require 'items')()
+Cursors = (require 'cursors')()
+Turrets = (require 'turrets')()
+Npcs = (require 'npcs')()
+Projectiles = (require 'projectiles')()
+
+-- Constants
+WORLD_WIDTH = 1300
+WORLD_HEIGHT = 900
+WINDOW_WIDTH = 1600
+WINDOW_HEIGHT = 900
+SIDEBAR_LEFT = 1300
+
+-- Global variables
 OpenDialog = nil
 CollisionCategories = {
     default = 1,
@@ -17,16 +46,6 @@ CollisionCategories = {
 }
 
 function love.load()
-    require 'player'
-    require 'ui'
-    require 'effects'
-    require 'mobs'
-    require 'items'
-    require 'cursors'
-    require 'turrets'
-    require 'npcs'
-    require 'projectiles'
-
     math.randomseed(os.time())
     love.window.setTitle("Emils gejm")
     love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, { resizable = false })
@@ -34,31 +53,25 @@ function love.load()
 
     love.physics.setMeter(32)
     World = love.physics.newWorld(0, 0, true)
-    World:setCallbacks(beginContact, endContact)
+    World:setCallbacks(BeginContact, EndContact)
 
-    Mobs:load()
-    Spider = (require 'mobs/spider')
-    Gold = (require 'items/gold')
-
-    Timer = require 'libraries/hump/timer'
-    Map = (require 'libraries/sti')('map.lua')
     Map:resize(WORLD_WIDTH, WORLD_HEIGHT)
 
     for _, object in pairs(Map.layers["HighTerrain"].objects) do
-        local body = love.physics.newBody(World, object.x + object.width/2, object.y + object.height/2, "static")
+        local body = love.physics.newBody(World, object.x + object.width / 2, object.y + object.height / 2, "static")
         local shape = love.physics.newRectangleShape(object.width, object.height)
         local fixture = love.physics.newFixture(body, shape, 1)
         fixture:setCategory(CollisionCategories.highTerrain)
-        fixture:setUserData({type='high-terrain'})
+        fixture:setUserData({ type = 'high-terrain' })
     end
 
     for _, object in pairs(Map.layers["LowTerrain"].objects) do
-        local body = love.physics.newBody(World, object.x + object.width/2, object.y + object.height/2, "static")
+        local body = love.physics.newBody(World, object.x + object.width / 2, object.y + object.height / 2, "static")
         local shape = love.physics.newRectangleShape(object.width, object.height)
         local fixture = love.physics.newFixture(body, shape, 1)
         fixture:setCategory(CollisionCategories.lowTerrain)
         fixture:setMask(CollisionCategories.projectile)
-        fixture:setUserData({type='low-terrain'})
+        fixture:setUserData({ type = 'low-terrain' })
     end
 
     local playerStartPosition = Vector()
@@ -73,16 +86,15 @@ function love.load()
         end
 
         if object.properties.type == 'spider' then
-            Spider.spawn(object.x, object.y)
+            Spider(object.x, object.y)
         end
 
         if object.properties.type == 'spawner' then
             local radius = object.width / 2
-            Mobs:addSpawner(
-                object.properties.mob_type,
-                object.properties.count,
+            Mobs:addSpiderSpawner(
                 Vector(object.x + radius, object.y + radius),
-                radius
+                radius,
+                object.properties.count
             )
         end
     end
@@ -93,12 +105,7 @@ function love.load()
 
     Player:load(playerStartPosition)
     Ui:load()
-    Items:load()
     Npcs:load(gunnarStartPosition)
-
-    -- TODO: No constructors needed for the dialogs
-    LootDialog = (require 'ui/loot-dialog'):new()
-    DialogueDialog = (require 'ui/dialogue-dialog'):new()
 
     local spriteLayer = Map.layers["Sprites"]
     spriteLayer.player = Player
@@ -150,7 +157,7 @@ function love.draw()
 
     Map:draw(-camera.x, -camera.y)
     Effects:draw(-camera.x, -camera.y)
-    Ui:draw(-camera.x, -camera.y)
+    Ui:draw()
 
     if (OpenDialog) then
         OpenDialog:draw()
@@ -170,7 +177,7 @@ function love.keypressed(key)
         if key == 'e' then
             local looted = Items:lootGround(Player:getX(), Player:getY(), 300)
             if (#looted > 0) then
-                LootDialog:open(looted)
+                OpenDialog = LootDialog(looted)
             end
         end
         Ui:keyPressed(key)
@@ -200,7 +207,7 @@ function love.mousepressed(x, y, button)
     if (OpenDialog) then
         OpenDialog:mousePressed(x, y, button)
     elseif (npc) then
-        DialogueDialog:open(npc.name, npc.dialogue)
+        OpenDialog = DialogueDialog(npc.name, npc.dialogue)
     else
         Ui:addDebugMessage("mousepressed btn " .. button)
         Ui:mouseMoved()
@@ -217,12 +224,13 @@ function love.mousereleased(x, y, button)
     end
 end
 
-function beginContact(a, b, coll)
-    Ui:addDebugMessage("begin-contact: '" .. (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
+function BeginContact(a, b, coll)
+    Ui:addDebugMessage("begin-contact: '" ..
+    (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
 
     local projectile = nil;
     if (a:getUserData().type == "projectile") then
-       projectile = a
+        projectile = a
     elseif (b:getUserData().type == "projectile") then
         projectile = b
     end
@@ -246,6 +254,7 @@ function beginContact(a, b, coll)
     end
 end
 
-function endContact(a, b, coll)
-    Ui:addDebugMessage("end-contact: '" .. (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
+function EndContact(a, b, coll)
+    Ui:addDebugMessage("end-contact: '" ..
+    (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
 end

@@ -1,17 +1,12 @@
-Items = {
-    goldCount = 0,
+Items = Class {
     ground = {},
     inventory = {},
 }
-Items.__index = Items
-
-function Items:load()
-end
 
 function Items:update(dt)
     local player = Player:vector()
 
-    for index, item in pairs(self.ground) do
+    for _, item in pairs(self.ground) do
         local itemV = item:vector()
         local distanceToPlayer = itemV:dist(player)
 
@@ -36,7 +31,7 @@ function Items:lootGround(x, y, distance)
     local player = Vector(x, y)
     local looted = {}
 
-    for index, item in pairs(self.ground) do
+    for _, item in pairs(self.ground) do
         local itemV = item:vector()
         local distanceToPlayer = itemV:dist(player)
 
@@ -52,7 +47,7 @@ function Items:addOnGround(item)
 end
 
 function Items:drawGroundItems()
-    for index, item in pairs(self.ground) do
+    for _, item in pairs(self.ground) do
         Ui:setColor(nil)
         love.graphics.draw(item.sprite, item.x, item.y, nil, 1, nil, 32, 32)
     end

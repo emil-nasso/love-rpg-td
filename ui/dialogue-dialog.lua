@@ -1,22 +1,19 @@
-DialogueDialog = {}
-DialogueDialog.__index = DialogueDialog
-
-function DialogueDialog:new()
-    local dialog = {
-        x = 200,
-        y = 100,
-        w = 400,
-        h = 300,
-        text = '',
-        choices = {},
-        items = {},
-        dialogue = {},
-        npcName = ''
-    }
-
-    setmetatable(dialog, DialogueDialog)
-    return dialog
-end
+DialogueDialog = Class {
+    init = function(self, npcName, dialogue)
+        self.npcName = npcName
+        self.dialogue = dialogue
+        self:updateOptions()
+    end,
+    x = 200,
+    y = 100,
+    w = 400,
+    h = 300,
+    text = '',
+    choices = {},
+    items = {},
+    dialogue = {},
+    npcName = ''
+}
 
 function DialogueDialog:updateOptions(selection)
     if (selection) then
@@ -31,13 +28,6 @@ function DialogueDialog:updateOptions(selection)
     self.text = current.text
 
     self.options = current.options or {}
-end
-
-function DialogueDialog:open(npcName, dialogue)
-    self.dialogue = dialogue
-    self.npcName = npcName
-    self:updateOptions()
-    OpenDialog = self
 end
 
 function DialogueDialog:atX(x)
@@ -72,7 +62,7 @@ end
 function DialogueDialog:draw()
     -- Border
     Ui:setColor(Ui.colors.lightGray)
-    love.graphics.rectangle('fill', self:atX(-4), self:atY(-4), self.w+8, self.h+8, 6, 6)
+    love.graphics.rectangle('fill', self:atX(-4), self:atY(-4), self.w + 8, self.h + 8, 6, 6)
     love.graphics.setLineWidth(1)
 
     -- Background
@@ -100,10 +90,10 @@ function DialogueDialog:draw()
     end
 
     if (#self.options == 0) then
-        self:drawOption(self:atX(10), self:atY(165), "space", "center", {option = "Continue..."})
+        self:drawOption(self:atX(10), self:atY(165), "space", "center", { option = "Continue..." })
     end
 
-    self:drawOption(self:atX(10), self:atY(265), "esc", "right", {option = "Close"})
+    self:drawOption(self:atX(10), self:atY(265), "esc", "right", { option = "Close" })
 end
 
 function DialogueDialog:drawOption(x, y, label, align, option)

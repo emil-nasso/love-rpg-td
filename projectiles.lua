@@ -1,7 +1,6 @@
-Projectiles = {
+Projectiles = Class {
     projectiles = {}
 }
-Projectiles.__index = Projectiles
 
 -- TODO: Remove angle?
 function Projectiles:spawn(x, y, range, vector, angle, offset, color)
@@ -19,7 +18,7 @@ function Projectiles:spawn(x, y, range, vector, angle, offset, color)
     end
 
     body:setLinearVelocity(direction.x * 500, direction.y * 500)
-    fixture:setUserData({type = 'projectile'})
+    fixture:setUserData({ type = 'projectile' })
 
     local projectile = {
         origin = Vector(x, y),

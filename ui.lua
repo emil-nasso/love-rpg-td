@@ -1,4 +1,4 @@
-Ui = {
+Ui = Class {
     colors = {
         yellow = { r = 1, g = 1, b = 0 },
         red = { r = 1, g = 0, b = 0 },
@@ -27,13 +27,6 @@ Ui = {
     debugMessages = {},
     showDebug = true,
 }
-Ui.__index = Ui
-
-function Ui:new(o)
-    local ui = o or {}
-    setmetatable(ui, Ui)
-    return ui
-end
 
 function Ui:mousePositionVector()
     return Vector(love.mouse.getPosition())
@@ -44,8 +37,8 @@ function Ui:mouseWorldPositionVector()
 end
 
 function Ui:setColor(color, alpha)
-    local alpha = alpha or 1
-    local color = color or { r = 1, g = 1, b = 1}
+    alpha = alpha or 1
+    color = color or { r = 1, g = 1, b = 1 }
 
     love.graphics.setColor(color.r, color.g, color.b, alpha)
 end
@@ -81,7 +74,7 @@ function Ui:keyPressed(key)
     end
 end
 
-function Ui:draw(offsetX, offsetY)
+function Ui:draw()
     local windowH = love.graphics.getHeight()
 
     -- Player stats
@@ -89,7 +82,7 @@ function Ui:draw(offsetX, offsetY)
     love.graphics.rectangle("fill", 0, windowH - 160, 250, 160, 10, 10)
     love.graphics.setFont(self.fonts.boldMedium)
     Ui:setColor(Ui.colors.black)
-    love.graphics.print("Gold: " .. Items.goldCount, 10, windowH - 150)
+    love.graphics.print("Gold: " .. Player.gold, 10, windowH - 150)
     love.graphics.print("Level: " .. Player.level, 10, windowH - 125)
 
     -- Print stats small and simplistic in the sidebar and only show bars in the UI
@@ -169,7 +162,7 @@ function Ui:drawSidebar()
     love.graphics.print(math.floor(levelProgress * 100) .. '%', SIDEBAR_LEFT + 250, 285)
 
     -- Gold amount
-    love.graphics.print(Items.goldCount, SIDEBAR_LEFT + 67, 9)
+    love.graphics.print(Player.gold, SIDEBAR_LEFT + 67, 9)
 end
 
 function Ui:drawDebug(offsetX, offsetY)
@@ -197,8 +190,8 @@ function Ui:drawDebug(offsetX, offsetY)
     local pos = Player:vector() + Vector(offsetX, offsetY)
     -- Player location crosshair
     Ui:setColor(Ui.colors.red)
-    love.graphics.line(pos.x-20, pos.y, pos.x+20, pos.y)
-    love.graphics.line(pos.x, pos.y-20, pos.x, pos.y+20)
+    love.graphics.line(pos.x - 20, pos.y, pos.x + 20, pos.y)
+    love.graphics.line(pos.x, pos.y - 20, pos.x, pos.y + 20)
 
     Ui:setColor(Ui.colors.black)
     for index, value in ipairs(self.debugMessages) do
@@ -208,7 +201,7 @@ end
 
 function Ui:drawMobsDebug(offsetX, offsetY)
     Ui:setColor(Ui.colors.yellow)
-    for index, mob in pairs(Mobs.mobs) do
+    for _, mob in pairs(Mobs.mobs) do
         love.graphics.line(
             mob.body:getX() + offsetX,
             mob.body:getY() + offsetY,
@@ -218,7 +211,7 @@ function Ui:drawMobsDebug(offsetX, offsetY)
     end
 
     -- Draw spawners
-    for index, spawner in pairs(Mobs.spawners) do
+    for _, spawner in pairs(Mobs.spawners) do
         DrawingSpawners = true
         Ui:setColor(Ui.colors.red)
         love.graphics.circle("line", spawner.pos.x + offsetX, spawner.pos.y + offsetY, spawner.radius)
@@ -237,8 +230,8 @@ end
 function Ui:drawPhysics(offsetX, offsetY)
     Ui:setColor(Ui.colors.white)
     local offset = Vector(offsetX, offsetY)
-    for i1, body in pairs(World:getBodies()) do
-        for i2, fixture in pairs(body:getFixtures()) do
+    for _, body in pairs(World:getBodies()) do
+        for _, fixture in pairs(body:getFixtures()) do
             local shape = fixture:getShape()
             local shapeType = shape:getType()
 
@@ -246,25 +239,14 @@ function Ui:drawPhysics(offsetX, offsetY)
                 local point = Vector(body:getWorldPoints(shape:getPoint())) + offset
                 love.graphics.circle("line", point.x, point.y, shape:getRadius())
             elseif shapeType == "polygon" then
-                love.graphics.polygon("line", OffsetPoints({body:getWorldPoints(shape:getPoints())}, offset))
+                love.graphics.polygon("line", OffsetPoints({ body:getWorldPoints(shape:getPoints()) }, offset))
             elseif shapeType == "edge" then
-                love.graphics.line(OffsetPoints({body:getWorldPoints(shape:getPoints())}, offset))
+                love.graphics.line(OffsetPoints({ body:getWorldPoints(shape:getPoints()) }, offset))
             elseif shapeType == "chain" then
-                love.graphics.line(OffsetPoints({body:getWorldPoints(shape:getPoints())}, offset))
+                love.graphics.line(OffsetPoints({ body:getWorldPoints(shape:getPoints()) }, offset))
             end
         end
     end
-end
-
-function OffsetPoints(points, offset)
-    local result = {}
-    for i3 = 1, #points, 2 do
-        local x = points[i3] + offset.x
-        local y = points[i3 + 1] + offset.y
-        table.insert(result, x)
-        table.insert(result, y)
-    end
-    return result
 end
 
 function Ui:getCameraPosition()
@@ -310,10 +292,6 @@ function Ui:mouseMoved()
     self.mousePos = Vector(self.mousePos.x + camera.x, self.mousePos.y + camera.y)
     self.mouseMoveCountdown = 2
     self.mouseRecentlyMoved = true
-end
-
-function FormatCoord(coord)
-    return '( ' .. string.format("%.2f", coord.x) .. ', ' .. string.format("%.2f", coord.y) .. ' )'
 end
 
 return Ui

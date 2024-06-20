@@ -1,39 +1,32 @@
-Spider = {
-    type='mob',
-    speed=100,
-    maxHealth=100,
+Spider = Class {
+    init = function(self, x, y, spawner)
+        self.health = 100
+        self.movementV = Vector(0, 0)
+        self.animations = {}
+        self.spawner = spawner
+
+        self.animations.up = Anim8.newAnimation(Spider.grid('5-10', 1), 0.2)
+        self.animations.left = Anim8.newAnimation(Spider.grid('5-10', 2), 0.2)
+        self.animations.down = Anim8.newAnimation(Spider.grid('5-10', 3), 0.2)
+        self.animations.right = Anim8.newAnimation(Spider.grid('5-10', 4), 0.2)
+        self.animation = self.animations.up
+        self.animation:gotoFrame(1)
+
+        self.body = love.physics.newBody(World, x, y, "dynamic")
+        self.body:setLinearDamping(2)
+        self.shape = love.physics.newCircleShape(15)
+        self.fixture = love.physics.newFixture(self.body, self.shape, 1)
+        self.fixture:setUserData(self)
+
+        Mobs:add(self)
+    end,
+    type = 'mob',
+    speed = 100,
+    maxHealth = 100,
 }
 
-Spider.__index = Spider
 Spider.spriteSheet = love.graphics.newImage('sprites/LPC_Spiders/spider01.png')
 Spider.grid = Anim8.newGrid(64, 64, Spider.spriteSheet:getWidth(), Spider.spriteSheet:getHeight())
-
-function Spider.spawn(x, y, spawner)
-    local spider = {
-        health=100,
-        movementV=Vector(0, 0),
-        animations={},
-        spawner=spawner,
-    }
-
-    spider.animations.up = Anim8.newAnimation(Spider.grid('5-10', 1), 0.2)
-    spider.animations.left = Anim8.newAnimation(Spider.grid('5-10', 2), 0.2)
-    spider.animations.down = Anim8.newAnimation(Spider.grid('5-10', 3), 0.2)
-    spider.animations.right = Anim8.newAnimation(Spider.grid('5-10', 4), 0.2)
-    spider.animation = spider.animations.up
-    spider.animation:gotoFrame(1)
-
-    spider.body = love.physics.newBody(World, x, y, "dynamic")
-    spider.body:setLinearDamping(2)
-    spider.shape = love.physics.newCircleShape(15)
-    spider.fixture = love.physics.newFixture(spider.body, spider.shape, 1)
-    spider.fixture:setUserData(spider)
-
-    setmetatable(spider, Spider)
-
-    Mobs:add(spider)
-    return spider
-end
 
 function Spider:hit(damage)
     -- Needed to handle multiple hit collisions being resolved at the same time
@@ -44,7 +37,7 @@ function Spider:hit(damage)
 
     self.health = self.health - damage
     if (self.health <= 0) then
-        Gold.spawn(math.random(1, 10), self.body:getX() + 16, self.body:getY() + 16)
+        Gold(math.random(1, 10), self.body:getX() + 16, self.body:getY() + 16)
         Player:gainXp(10)
         Mobs:remove(self)
         if (self.spawner) then

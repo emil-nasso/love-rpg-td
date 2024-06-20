@@ -1,4 +1,4 @@
-Cursors = {
+Cursors = Class {
     cursors = {
         arrow = love.mouse.getSystemCursor('arrow'),
         pointer = love.mouse.getSystemCursor('hand'),
@@ -7,7 +7,6 @@ Cursors = {
     },
     pointer = false,
 }
-Cursors.__index = Cursors
 
 function Cursors:setPointerCursor()
     self.pointer = true
