@@ -1,5 +1,5 @@
 Spider = Class {
-    init = function(self, x, y, spawner)
+    init = function(self, pos, spawner)
         self.health = 100
         self.movementV = Vector(0, 0)
         self.animations = {}
@@ -12,7 +12,7 @@ Spider = Class {
         self.animation = self.animations.up
         self.animation:gotoFrame(1)
 
-        self.body = love.physics.newBody(World, x, y, "dynamic")
+        self.body = love.physics.newBody(World, pos.x, pos.y, "dynamic")
         self.body:setLinearDamping(2)
         self.shape = love.physics.newCircleShape(15)
         self.fixture = love.physics.newFixture(self.body, self.shape, 1)
@@ -37,13 +37,19 @@ function Spider:hit(damage)
 
     self.health = self.health - damage
     if (self.health <= 0) then
-        Gold(math.random(1, 10), Vector(self.body:getX() + 16, self.body:getY() + 16))
+        Gold(math.random(1, 10), self:lootDropPosition())
+        ManaOrb(math.random(1, 10), self:lootDropPosition())
+        HealthOrb(math.random(1, 10), self:lootDropPosition())
         Player:gainXp(10)
         Mobs:remove(self)
         if (self.spawner) then
             self.spawner.spawned = self.spawner.spawned - 1
         end
     end
+end
+
+function Spider:lootDropPosition()
+    return RandomPosInCircle(Vector(self.body:getX() + 15, self.body:getY() + 15), 15)
 end
 
 function Spider:move(dt)

@@ -1,4 +1,4 @@
-Gold = Class {
+ManaOrb = Class {
     init = function(self, amount, pos)
         self.amount = amount
         self.pos = pos
@@ -7,20 +7,20 @@ Gold = Class {
     autoPickup = true,
 }
 
-function Gold:pickup()
-    Ui:addDebugMessage("Picking up gold")
+function ManaOrb:pickup()
+    Ui:addDebugMessage("Picking up mana orb")
 
+    Player.mana:regenerateAmount(self.amount)
     Items:removeFromGround(self)
-    Player.gold = Player.gold + self.amount
 end
 
-function Gold:draw(positionOverride)
+function ManaOrb:draw(positionOverride)
     local pos = positionOverride or self.pos
 
     Ui:setColor(Ui.colors.black)
     love.graphics.circle("line", pos.x, pos.y, self.amount + 1)
-    Ui:setColor(Ui.colors.yellow)
+    Ui:setColor(Ui.colors.blue)
     love.graphics.circle("fill", pos.x, pos.y, self.amount)
 end
 
-return Gold
+return ManaOrb

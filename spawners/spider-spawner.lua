@@ -7,11 +7,7 @@ SpiderSpawner = Class {
 
         self.timer = Timer.every(2, function()
             if (self.spawned < self.count) then
-                local angle = math.random() * math.pi * 2
-                local distance = math.random() * radius
-                local x = pos.x + math.cos(angle) * distance
-                local y = pos.y + math.sin(angle) * distance
-                Spider(x, y, self)
+                Spider(RandomPosInCircle(self.pos, self.radius), self)
                 self.spawned = self.spawned + 1
             end
         end)
@@ -27,11 +23,7 @@ SpiderSpawner = Class {
 
 function SpiderSpawner:initialSpawn()
     for _ = 1, self.count do
-        local angle = math.random() * math.pi * 2
-        local distance = math.random() * self.radius
-        local x = self.pos.x + math.cos(angle) * distance
-        local y = self.pos.y + math.sin(angle) * distance
-        Spider(x, y, self)
+        Spider(RandomPosInCircle(self.pos, self.radius), self)
     end
 end
 

@@ -20,6 +20,13 @@ function PlayerResource:regenerate(dt)
     self.amount = math.min(self.amount + self.regen * dt, self.max)
 end
 
+function PlayerResource:regenerateAmount(amount)
+    if (self:isFull()) then
+        return
+    end
+    self.amount = math.min(self.amount + amount, self.max)
+end
+
 function PlayerResource:drain(drainRate, dt)
     self.amount = math.max(self.amount - (drainRate * dt), 0)
 end

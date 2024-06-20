@@ -12,3 +12,13 @@ function OffsetPoints(points, offset)
     end
     return result
 end
+
+function RandomPosInCircle(centerPos, radius)
+    local angle = math.random() * math.pi * 2
+    local distance = math.random() * radius
+
+    local x = centerPos.x + math.cos(angle) * distance
+    local y = centerPos.y + math.sin(angle) * distance
+
+    return Vector(x, y)
+end

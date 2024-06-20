@@ -12,6 +12,8 @@ Anim8 = require 'libraries.anim8.anim8'
 Vector = require 'libraries.hump.vector'
 Spider = require 'mobs.spider'
 Gold = require 'items.gold'
+ManaOrb = require 'items.mana-orb'
+HealthOrb = require 'items.health-orb'
 LootDialog = require 'ui.loot-dialog'
 DialogueDialog = require 'ui.dialogue-dialog'
 HeroText = require 'effects.hero-text'
@@ -89,7 +91,7 @@ function love.load()
         end
 
         if object.properties.type == 'spider' then
-            Spider(object.x, object.y)
+            Spider(Vector(object.x, object.y))
         end
 
         if object.properties.type == 'spawner' then
@@ -237,8 +239,8 @@ function love.mousereleased(x, y, button)
 end
 
 function BeginContact(a, b, coll)
-    Ui:addDebugMessage("begin-contact: '" ..
-        (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
+    --Ui:addDebugMessage("begin-contact: '" ..
+    --    (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
 
     local projectile = nil;
     if (a:getUserData().type == "projectile") then
@@ -267,6 +269,6 @@ function BeginContact(a, b, coll)
 end
 
 function EndContact(a, b, coll)
-    Ui:addDebugMessage("end-contact: '" ..
-        (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
+    --Ui:addDebugMessage("end-contact: '" ..
+    --    (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
 end
