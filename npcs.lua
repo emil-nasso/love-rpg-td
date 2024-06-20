@@ -48,7 +48,7 @@ function Npcs:draw()
     for _, npc in pairs(self.npcs) do
         Ui:setColor(Ui.colors.white)
         love.graphics.rectangle('fill', npc.pos.x - 22, npc.pos.y - 35, 45, 14)
-        love.graphics.setFont(Ui.fonts.boldSmall)
+        Ui:setBoldFont(Ui.fontSize.s)
         Ui:setColor(Ui.colors.black)
         love.graphics.print(npc.name, npc.pos.x - 20, npc.pos.y - 35)
 

@@ -135,7 +135,7 @@ end
 
 function LootDialog:drawButton(button)
     Ui:setColor(Ui.colors.white)
-    love.graphics.setFont(Ui.fonts.regularMedium)
+    Ui:setFont(Ui.fontSize.l)
 
     local x, y = self:atX(button.x), self:atY(button.y)
 

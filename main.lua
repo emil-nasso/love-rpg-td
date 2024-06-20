@@ -4,6 +4,7 @@ require('helpers')
 Timer = require 'libraries.hump.timer'
 Map = require('libraries.sti')('map.lua')
 Sprites = require('libraries.cargo.cargo').init('sprites')
+Font = require('libraries.cargo.cargo').init('fonts/bitstream_vera_sans')
 
 -- Classes
 Class = require "libraries.hump.class"

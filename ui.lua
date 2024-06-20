@@ -11,17 +11,30 @@ Ui = Class {
         darkGray = { r = 0.3, g = 0.3, b = 0.3 },
         purple = { r = 200 / 255, g = 0, b = 150 / 255 }
     },
-    fonts = {
-        regularSmall = love.graphics.newFont('fonts/bitstream_vera_sans/Vera.ttf', 10),
-        regularSmallMedium = love.graphics.newFont('fonts/bitstream_vera_sans/Vera.ttf', 12),
-        regularMedium = love.graphics.newFont('fonts/bitstream_vera_sans/Vera.ttf', 16),
-        boldSmall = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 10),
-        boldMedium = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 16),
-        boldLarge = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 24),
+    fontSize = {
+        s = 10,
+        m = 12,
+        l = 16,
+        xl = 24,
     },
     debugMessages = {},
     showDebug = true,
 }
+
+function Ui:setColor(color, alpha)
+    alpha = alpha or 1
+    color = color or { r = 1, g = 1, b = 1 }
+
+    love.graphics.setColor(color.r, color.g, color.b, alpha)
+end
+
+function Ui:setFont(size)
+    love.graphics.setFont(Font.Vera(size))
+end
+
+function Ui:setBoldFont(size)
+    love.graphics.setFont(Font.VeraBd(size))
+end
 
 function Ui:mousePositionVector()
     return Vector(love.mouse.getPosition())
@@ -31,15 +44,8 @@ function Ui:mouseWorldPositionVector()
     return self:mousePositionVector() + self:getCameraPosition()
 end
 
-function Ui:setColor(color, alpha)
-    alpha = alpha or 1
-    color = color or { r = 1, g = 1, b = 1 }
-
-    love.graphics.setColor(color.r, color.g, color.b, alpha)
-end
-
 function Ui:load()
-    love.graphics.setFont(self.fonts.regularMedium)
+    Ui:setFont(Ui.fontSize.l)
     self:mouseMoved()
 end
 
@@ -75,7 +81,7 @@ function Ui:draw()
     -- Player stats
     Ui:setColor(Ui.colors.white, 0.3)
     love.graphics.rectangle("fill", 0, windowH - 160, 250, 160, 10, 10)
-    love.graphics.setFont(self.fonts.boldMedium)
+    Ui:setBoldFont(Ui.fontSize.l)
     Ui:setColor(Ui.colors.black)
     love.graphics.print("Gold: " .. Player.gold, 10, windowH - 150)
     love.graphics.print("Level: " .. Player.level, 10, windowH - 125)
@@ -91,8 +97,7 @@ function Ui:draw()
     Ui:setColor(nil)
 
     -- Toolbar
-
-    love.graphics.setFont(self.fonts.boldSmall)
+    Ui:setBoldFont(Ui.fontSize.s)
 
     -- Shooter turret
     self:drawToolbarIcon(Sprites.toolbar.shooter_turret, 700, windowH - 100, "1")
@@ -122,7 +127,7 @@ function Ui:drawToolbarIcon(sprite, x, y, key)
 end
 
 function Ui:drawPlayerBar(x, y, percentage, label, color)
-    love.graphics.setFont(self.fonts.boldMedium)
+    Ui:setBoldFont(Ui.fontSize.l)
 
     Ui:setColor(Ui.colors.black)
     love.graphics.rectangle("fill", x, y, 110, 20, 5)
@@ -147,7 +152,7 @@ function Ui:drawSidebar()
     -- Xp progress bar
     self:drawSidebarBar(SIDEBAR_LEFT + 14, 306, 272, 4, levelProgress, Ui.colors.yellow)
 
-    love.graphics.setFont(Ui.fonts.boldMedium)
+    Ui:setBoldFont(Ui.fontSize.l)
     -- Current level
     love.graphics.print(Player.level, SIDEBAR_LEFT + 75, 285)
 
@@ -157,8 +162,7 @@ function Ui:drawSidebar()
     -- Gold amount
     love.graphics.print(Player.gold, SIDEBAR_LEFT + 67, 9)
 
-
-    love.graphics.setFont(Ui.fonts.regularSmallMedium)
+    Ui:setFont(Ui.fontSize.m)
     Ui:setColor(Ui.colors.black)
     -- Left stats
     love.graphics.printf(
@@ -186,7 +190,7 @@ end
 
 -- Draw the fixed position parts of the debug
 function Ui:drawDebugUi()
-    love.graphics.setFont(Ui.fonts.boldSmall)
+    Ui:setBoldFont(Ui.fontSize.s)
 
     -- Debug message
     Ui:setColor(Ui.colors.black)

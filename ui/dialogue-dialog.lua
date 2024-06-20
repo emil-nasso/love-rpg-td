@@ -71,11 +71,11 @@ function DialogueDialog:draw()
 
     -- Title
     Ui:setColor(Ui.colors.white)
-    love.graphics.setFont(Ui.fonts.boldMedium)
+    Ui:setBoldFont(Ui.fontSize.l)
     love.graphics.print(self.npcName, self:atX(10), self:atY(10))
 
     Ui:setColor(Ui.colors.white)
-    love.graphics.setFont(Ui.fonts.regularMedium)
+    Ui:setFont(Ui.fontSize.l)
     love.graphics.print(self.text, self:atX(10), self:atY(35))
 
     Ui:setColor(nil)
@@ -83,7 +83,7 @@ function DialogueDialog:draw()
     -- Options
 
     Ui:setColor(Ui.colors.white)
-    love.graphics.setFont(Ui.fonts.boldMedium)
+    Ui:setBoldFont(Ui.fontSize.l)
 
     for number, option in pairs(self.options) do
         self:drawOption(self:atX(10), self:atY(number * 20 + 50), number, "center", option)
