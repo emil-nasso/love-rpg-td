@@ -4,12 +4,10 @@ Player = Class {
     currentLevelXp = 0,
     nextLevelXp = 100,
     speed = 250,
-    stamina = 100,
-    staminaDrain = 50,
-    staminaRecovery = 25,
-    health = 100,
-    mana = 100,
-    manaRecovery = 50,
+    health = PlayerResource(50, 100, 5),
+    mana = PlayerResource(50, 100, 20),
+    stamina = PlayerResource(100, 100, 25),
+    tech = PlayerResource(200, 1000, 0),
     viewingAngle = 0,
     viewingDirection = Vector(0, 0),
     movingDirection = Vector(0, 0),
@@ -74,23 +72,22 @@ function Player:shoot()
 end
 
 function Player:shootShotgun()
-    if (self.mana < 25) then
-        return
-    end
-    self.mana = self.mana - 25
+    if (self.mana:has(25)) then
+        self.mana:use(25)
 
-    local angles = {
-        math.rad(-15),
-        math.rad(-10),
-        math.rad(-5),
-        math.rad(0),
-        math.rad(5),
-        math.rad(10),
-        math.rad(15),
-    }
+        local angles = {
+            math.rad(-15),
+            math.rad(-10),
+            math.rad(-5),
+            math.rad(0),
+            math.rad(5),
+            math.rad(10),
+            math.rad(15),
+        }
 
-    for i, angle in ipairs(angles) do
-        Projectiles:spawn(self:getX(), self:getY(), 200, self.viewingDirection, angle, 20)
+        for i, angle in ipairs(angles) do
+            Projectiles:spawn(self:getX(), self:getY(), 200, self.viewingDirection, angle, 20)
+        end
     end
 end
 
@@ -99,8 +96,19 @@ function Player:gainXp(xp)
     if (self.xp >= self.nextLevelXp) then
         self.level = self.level + 1
         self.currentLevelXp = self.nextLevelXp
-        self.nextLevelXp = self.nextLevelXp + (self.nextLevelXp * 1.5)
+        self.nextLevelXp = math.floor(self.nextLevelXp + (self.nextLevelXp * 1.5))
         Effects:addHeroText("You gained a level!\nYou are now level " .. self.level .. ".")
+
+        self.health:increaseMax(10)
+        self.health:increaseMax(5)
+
+        self.mana:increaseMax(10)
+        self.mana:increaseMax(5)
+
+        self.stamina:increaseMax(10)
+        self.stamina:increaseMax(5)
+
+        self.speed = self.speed + 100
     end
 end
 
@@ -113,8 +121,8 @@ function Player:keyPressed(key)
 end
 
 function Player:detonateShock(x, y)
-    if (self.mana >= 50) then
-        self.mana = self.mana - 50
+    if (self.mana:has(50)) then
+        self.mana:use(50)
         Effects:addShockwave(x, y)
         Mobs:applyShockwave(x, y)
     end
@@ -151,22 +159,16 @@ function Player:update(dt)
     local isMoving = self.movingDirection ~= Vector(0, 0)
 
     if love.keyboard.isDown("lshift") and isMoving then
-        if (Player.stamina > 0) then
+        if (Player.stamina:isEmpty() == false) then
             movingSpeed = movingSpeed * 2
-            Player.stamina = Player.stamina - Player.staminaDrain * dt
+            Player.stamina:drain(40, dt)
         end
     else
-        if (Player.stamina < 100) then
-            Player.stamina = Player.stamina + Player.staminaRecovery * dt
-        end
+        Player.stamina:regenerate(dt)
     end
 
-    if (self.mana < 100) then
-        self.mana = self.mana + self.manaRecovery * dt
-        if (self.mana > 100) then
-            self.mana = 100
-        end
-    end
+    self.mana:regenerate(dt)
+    self.health:regenerate(dt)
 
     if isMoving then
         Player.physics.body:setLinearVelocity(self.movingDirection.x * movingSpeed, self.movingDirection.y * movingSpeed)

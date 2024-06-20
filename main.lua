@@ -13,6 +13,7 @@ Explosion = require 'effects.explosion'
 Shockwave = require 'effects.shockwave'
 Shooter = require 'turrets.shooter'
 SpiderSpawner = require 'spawners.spider-spawner'
+PlayerResource = require 'util.player-resource'
 
 -- Libraries
 Timer = require 'libraries.hump.timer'
@@ -226,7 +227,7 @@ end
 
 function BeginContact(a, b, coll)
     Ui:addDebugMessage("begin-contact: '" ..
-    (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
+        (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
 
     local projectile = nil;
     if (a:getUserData().type == "projectile") then
@@ -256,5 +257,5 @@ end
 
 function EndContact(a, b, coll)
     Ui:addDebugMessage("end-contact: '" ..
-    (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
+        (a:getUserData().type or '') .. "' and '" .. (b:getUserData().type or '') .. "'")
 end

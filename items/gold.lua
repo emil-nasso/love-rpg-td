@@ -1,8 +1,7 @@
 Gold = Class {
-    init = function(self, amount, x, y)
+    init = function(self, amount, pos)
         self.amount = amount
-        self.x = x
-        self.y = y
+        self.pos = pos
         self.sprite = Gold.sprites[amount]
         Items:addOnGround(self)
     end,
@@ -21,10 +20,6 @@ Gold.sprites[7] = love.graphics.newImage('sprites/StoneSoup/item/gold/gold_pile_
 Gold.sprites[8] = love.graphics.newImage('sprites/StoneSoup/item/gold/gold_pile_8.png')
 Gold.sprites[9] = love.graphics.newImage('sprites/StoneSoup/item/gold/gold_pile_9.png')
 Gold.sprites[10] = love.graphics.newImage('sprites/StoneSoup/item/gold/gold_pile_10.png')
-
-function Gold:vector()
-    return Vector(self.x, self.y)
-end
 
 function Gold:pickup()
     Ui:addDebugMessage("Picking up gold")

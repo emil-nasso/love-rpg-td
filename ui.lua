@@ -9,8 +9,11 @@ Ui = Class {
         lightGray = { r = 0.7, g = 0.7, b = 0.7 },
         gray = { r = 0.5, g = 0.5, b = 0.5 },
         darkGray = { r = 0.3, g = 0.3, b = 0.3 },
+        purple = { r = 200 / 255, g = 0, b = 150 / 255 }
     },
     fonts = {
+        regularSmall = love.graphics.newFont('fonts/bitstream_vera_sans/Vera.ttf', 10),
+        regularSmallMedium = love.graphics.newFont('fonts/bitstream_vera_sans/Vera.ttf', 12),
         regularMedium = love.graphics.newFont('fonts/bitstream_vera_sans/Vera.ttf', 16),
         boldSmall = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 10),
         boldMedium = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 16),
@@ -86,11 +89,12 @@ function Ui:draw()
     love.graphics.print("Level: " .. Player.level, 10, windowH - 125)
 
     -- Print stats small and simplistic in the sidebar and only show bars in the UI
-    local xpProgress = ((Player.xp - Player.currentLevelXp) / (Player.nextLevelXp - Player.currentLevelXp)) * 100
-    self:drawPlayerBar(10, windowH - 100, xpProgress, "XP: " .. Player.xp .. "/" .. Player.nextLevelXp, Ui.colors.white)
-    self:drawPlayerBar(10, windowH - 75, Player.health, "Health", Ui.colors.red)
-    self:drawPlayerBar(10, windowH - 50, Player.mana, "Mana", Ui.colors.blue)
-    self:drawPlayerBar(10, windowH - 25, Player.stamina, "Stamina", Ui.colors.yellow)
+    local xpProgress = ((Player.xp - Player.currentLevelXp) / (Player.nextLevelXp - Player.currentLevelXp))
+    self:drawPlayerBar(10, windowH - 125, xpProgress, "XP: " .. Player.xp .. "/" .. Player.nextLevelXp, Ui.colors.white)
+    self:drawPlayerBar(10, windowH - 100, Player.health:percentage(), "Health", Ui.colors.red)
+    self:drawPlayerBar(10, windowH - 75, Player.mana:percentage(), "Mana", Ui.colors.blue)
+    self:drawPlayerBar(10, windowH - 50, Player.tech:percentage(), "Tech", Ui.colors.purple)
+    self:drawPlayerBar(10, windowH - 25, Player.stamina:percentage(), "Stamina", Ui.colors.yellow)
 
     Ui:setColor(nil)
 
@@ -135,7 +139,7 @@ function Ui:drawPlayerBar(x, y, percentage, label, color)
     love.graphics.rectangle("fill", x, y, 110, 20, 5)
 
     Ui:setColor(color)
-    love.graphics.rectangle("fill", x + 5, y + 5, percentage, 10)
+    love.graphics.rectangle("fill", x + 5, y + 5, percentage * 100, 10)
 
     Ui:setColor(Ui.colors.black)
     love.graphics.print(label, x + 115, y)
@@ -163,6 +167,32 @@ function Ui:drawSidebar()
 
     -- Gold amount
     love.graphics.print(Player.gold, SIDEBAR_LEFT + 67, 9)
+
+
+    love.graphics.setFont(Ui.fonts.regularSmallMedium)
+    Ui:setColor(Ui.colors.black)
+    -- Left stats
+    love.graphics.printf(
+        "XP: " .. math.floor(Player.xp) .. "/" .. Player.nextLevelXp .. "\n" ..
+        "Health: " .. math.floor(Player.health.amount) .. "/" .. Player.health.max .. "\n" ..
+        "Mana: " .. math.floor(Player.mana.amount) .. "/" .. Player.mana.max .. "\n" ..
+        "Stamina: " .. math.floor(Player.stamina.amount) .. "/" .. Player.stamina.max .. "\n" ..
+        "Tech: " .. math.floor(Player.tech.amount) .. "/" .. Player.tech.max .. "\n",
+        SIDEBAR_LEFT + 10,
+        320,
+        140
+    )
+    -- Right stats
+    love.graphics.printf(
+        "Health regen: " .. math.floor(Player.health.regen) .. "/s" .. "\n" ..
+        "Mana regen: " .. math.floor(Player.mana.regen) .. "/s" .. "\n" ..
+        "Stamina regen: " .. math.floor(Player.stamina.regen) .. "/s" .. "\n" ..
+        "\n" ..
+        "Speed: " .. math.floor(Player.speed) .. "\n",
+        SIDEBAR_LEFT + 145,
+        320,
+        140
+    )
 end
 
 function Ui:drawDebug(offsetX, offsetY)

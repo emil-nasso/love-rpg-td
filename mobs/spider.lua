@@ -37,7 +37,7 @@ function Spider:hit(damage)
 
     self.health = self.health - damage
     if (self.health <= 0) then
-        Gold(math.random(1, 10), self.body:getX() + 16, self.body:getY() + 16)
+        Gold(math.random(1, 10), Vector(self.body:getX() + 16, self.body:getY() + 16))
         Player:gainXp(10)
         Mobs:remove(self)
         if (self.spawner) then

@@ -7,8 +7,7 @@ function Items:update(dt)
     local player = Player:vector()
 
     for _, item in pairs(self.ground) do
-        local itemV = item:vector()
-        local distanceToPlayer = itemV:dist(player)
+        local distanceToPlayer = item.pos:dist(player)
 
         if (distanceToPlayer < 50) then
             if item.autoPickup then
@@ -32,8 +31,7 @@ function Items:lootGround(x, y, distance)
     local looted = {}
 
     for _, item in pairs(self.ground) do
-        local itemV = item:vector()
-        local distanceToPlayer = itemV:dist(player)
+        local distanceToPlayer = item.pos:dist(player)
 
         if (distanceToPlayer < distance) then
             table.insert(looted, item)
@@ -49,7 +47,7 @@ end
 function Items:drawGroundItems()
     for _, item in pairs(self.ground) do
         Ui:setColor(nil)
-        love.graphics.draw(item.sprite, item.x, item.y, nil, 1, nil, 32, 32)
+        love.graphics.draw(item.sprite, item.pos.x, item.pos.y, nil, 1, nil, 32, 32)
     end
 end
 
