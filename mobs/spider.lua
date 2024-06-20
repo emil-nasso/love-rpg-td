@@ -25,7 +25,7 @@ Spider = Class {
     maxHealth = 100,
 }
 
-Spider.spriteSheet = love.graphics.newImage('sprites/LPC_Spiders/spider01.png')
+Spider.spriteSheet = Sprites.LPC_Spiders.spider01
 Spider.grid = Anim8.newGrid(64, 64, Spider.spriteSheet:getWidth(), Spider.spriteSheet:getHeight())
 
 function Spider:hit(damage)

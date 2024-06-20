@@ -19,14 +19,6 @@ Ui = Class {
         boldMedium = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 16),
         boldLarge = love.graphics.newFont('fonts/bitstream_vera_sans/VeraBd.ttf', 24),
     },
-    sprites = {
-        shooterTurret = love.graphics.newImage('sprites/shooter-turret-toolbar.png'),
-        sprint = love.graphics.newImage('sprites/sprint-toolbar.png'),
-        shotgun = love.graphics.newImage('sprites/shotgun-toolbar.png'),
-        shockwave = love.graphics.newImage('sprites/shockwave-toolbar.png'),
-        heal = love.graphics.newImage('sprites/StoneSoup/gui/spells/necromancy/regeneration_new.png'),
-        sidebar = love.graphics.newImage('sprites/sidebar.png'),
-    },
     debugMessages = {},
     showDebug = true,
 }
@@ -103,19 +95,16 @@ function Ui:draw()
     love.graphics.setFont(self.fonts.boldSmall)
 
     -- Shooter turret
-    self:drawToolbarIcon(self.sprites.shooterTurret, 700, windowH - 100, "1")
+    self:drawToolbarIcon(Sprites.toolbar.shooter_turret, 700, windowH - 100, "1")
 
     -- Sprint
-    self:drawToolbarIcon(self.sprites.sprint, 750, windowH - 100, "lshift")
+    self:drawToolbarIcon(Sprites.toolbar.sprint, 750, windowH - 100, "lshift")
 
     -- Shockwave
-    self:drawToolbarIcon(self.sprites.shockwave, 800, windowH - 100, "space")
+    self:drawToolbarIcon(Sprites.toolbar.shockwave, 800, windowH - 100, "space")
 
     -- Shotgun
-    self:drawToolbarIcon(self.sprites.shotgun, 850, windowH - 100, "2")
-
-    -- Heal
-    self:drawToolbarIcon(self.sprites.heal, 900, windowH - 100, "3")
+    self:drawToolbarIcon(Sprites.toolbar.shotgun, 850, windowH - 100, "2")
 end
 
 function Ui:drawToolbarIcon(sprite, x, y, key)
@@ -152,7 +141,7 @@ end
 
 function Ui:drawSidebar()
     self:setColor(nil)
-    love.graphics.draw(self.sprites.sidebar, SIDEBAR_LEFT, 0)
+    love.graphics.draw(Sprites.sidebar, SIDEBAR_LEFT, 0)
 
     local levelProgress = Player:levelProgress()
     -- Xp progress bar
@@ -195,9 +184,17 @@ function Ui:drawSidebar()
     )
 end
 
-function Ui:drawDebug(offsetX, offsetY)
+-- Draw the fixed position parts of the debug
+function Ui:drawDebugUi()
     love.graphics.setFont(Ui.fonts.boldSmall)
 
+    -- Debug message
+    Ui:setColor(Ui.colors.black)
+    for index, value in ipairs(self.debugMessages) do
+        love.graphics.print(value, 5, index * 10 - 5)
+    end
+
+    -- Static messages
     local y = 5;
     local messages = {
         "Mouse: " .. FormatCoord(self.mousePos),
@@ -210,23 +207,14 @@ function Ui:drawDebug(offsetX, offsetY)
     }
 
     Ui:setColor(Ui.colors.black, 0.2)
-    love.graphics.rectangle("fill", 600, 0, 200, #messages * 20 + 20)
+    love.graphics.rectangle("fill", 1100, 0, 200, #messages * 20 + 20)
 
     Ui:setColor(Ui.colors.white, 0.7)
     for i, message in ipairs(messages) do
-        love.graphics.print(message, 605, y + ((i - 1) * 10))
+        love.graphics.print(message, 1105, y + ((i - 1) * 10))
     end
 
-    local pos = Player:vector() + Vector(offsetX, offsetY)
-    -- Player location crosshair
-    Ui:setColor(Ui.colors.red)
-    love.graphics.line(pos.x - 20, pos.y, pos.x + 20, pos.y)
-    love.graphics.line(pos.x, pos.y - 20, pos.x, pos.y + 20)
-
-    Ui:setColor(Ui.colors.black)
-    for index, value in ipairs(self.debugMessages) do
-        love.graphics.print(value, 5, index * 10 - 5)
-    end
+    Ui:setColor(nil)
 end
 
 function Ui:drawMobsDebug(offsetX, offsetY)
@@ -255,6 +243,13 @@ function Ui:addDebugMessage(message)
     if (#self.debugMessages > 10) then
         table.remove(self.debugMessages, 1)
     end
+end
+
+function Ui:drawWorldDebug()
+    Ui:setColor(Ui.colors.red)
+    local pos = Player:vector()
+    love.graphics.line(pos.x - 20, pos.y, pos.x + 20, pos.y)
+    love.graphics.line(pos.x, pos.y - 20, pos.x, pos.y + 20)
 end
 
 function Ui:drawPhysics(offsetX, offsetY)

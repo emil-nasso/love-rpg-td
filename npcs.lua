@@ -12,7 +12,7 @@ function Npcs:load(gunnarPosition)
         pos = gunnarPosition,
         r = 20,
         name = "Gunnar",
-        sprite = love.graphics.newImage('sprites/StoneSoup/monster/boggart_new.png'),
+        sprite = Sprites.gunnar,
         dialogue = {
             text = "Hi! Is there anything I can do for you today?",
             options = {
@@ -21,8 +21,8 @@ function Npcs:load(gunnarPosition)
                     text = "What would you like to buy?",
                     options = {
                         { option = "Carrots - 10 gold", text = "I'm all out, sorry." },
-                        { option = "Banana - 20 gold", text = "Too yellow. No can do." },
-                        { option = "Candy - 30 gold", text = "Are you crazy?! It's not saturday!" },
+                        { option = "Banana - 20 gold",  text = "Too yellow. No can do." },
+                        { option = "Candy - 30 gold",   text = "Are you crazy?! It's not saturday!" },
                     }
                 }
             }

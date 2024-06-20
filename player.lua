@@ -21,7 +21,7 @@ Player = Class {
 }
 
 function Player:load(startPosition)
-    self.spriteSheet = love.graphics.newImage('sprites/player-sheet.png')
+    self.spriteSheet = Sprites.player_sheet
     self.grid = Anim8.newGrid(12, 18, self.spriteSheet:getWidth(), self.spriteSheet:getHeight())
 
     self.animations = {}

@@ -1,5 +1,10 @@
 require('helpers')
 
+-- Libraries
+Timer = require 'libraries.hump.timer'
+Map = require('libraries.sti')('map.lua')
+Sprites = require('libraries.cargo.cargo').init('sprites')
+
 -- Classes
 Class = require "libraries.hump.class"
 Anim8 = require 'libraries.anim8.anim8'
@@ -14,10 +19,6 @@ Shockwave = require 'effects.shockwave'
 Shooter = require 'turrets.shooter'
 SpiderSpawner = require 'spawners.spider-spawner'
 PlayerResource = require 'util.player-resource'
-
--- Libraries
-Timer = require 'libraries.hump.timer'
-Map = (require 'libraries.sti')('map.lua')
 
 -- Managers
 Player = (require 'player')()
@@ -139,10 +140,9 @@ function love.load()
 
     function debugLayer:draw()
         if (Ui.showDebug) then
-            Ui:drawDebug(0, 0)
-
             Ui:drawMobsDebug(0, 0)
             Ui:drawPhysics(0, 0)
+            Ui:drawWorldDebug()
         end
     end
 end
@@ -164,7 +164,6 @@ function love.draw()
     local camera = Ui:getCameraPosition()
 
     Map:draw(-camera.x, -camera.y)
-    Effects:draw(-camera.x, -camera.y)
     Ui:draw()
 
     if (OpenDialog) then
@@ -176,6 +175,10 @@ function love.draw()
     Ui:setColor(nil)
 
     Cursors:draw()
+
+    if (Ui.showDebug) then
+        Ui:drawDebugUi()
+    end
 end
 
 function love.keypressed(key)

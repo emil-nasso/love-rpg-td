@@ -4,7 +4,7 @@ LootDialog = Class {
         local col = 0
         self.items = {}
 
-        for index, item in pairs(items) do
+        for _, item in pairs(items) do
             table.insert(self.items, {
                 item = item,
                 row = row,
@@ -23,7 +23,7 @@ LootDialog = Class {
     h = 300,
     items = {},
     buttons = {
-        { text = "Close [esc]", x = 160, y = 250, w = 110, h = 40, action = function(self) self:close() end },
+        { text = "Close [esc]",  x = 160, y = 250, w = 110, h = 40, action = function(self) self:close() end },
         { text = "Loot all [e]", x = 280, y = 250, w = 110, h = 40, action = function(self) self:lootAll() end },
     }
 }
@@ -51,7 +51,7 @@ function LootDialog:keyPressed(key)
 end
 
 function LootDialog:lootAll()
-    for index, item in pairs(self.items) do
+    for _, item in pairs(self.items) do
         item.item:pickup()
     end
     self:close()
@@ -122,13 +122,13 @@ function LootDialog:draw()
     Ui:setColor(nil)
 
     -- Items
-    for index, item in pairs(self.items) do
+    for _, item in pairs(self.items) do
         local x, y = self:gridCoord(item.col, item.row)
-        love.graphics.draw(item.item.sprite, x + 4, y + 4)
+        item.item:draw(Vector(x + 20, y + 20))
     end
 
     -- Buttons
-    for index, button in pairs(self.buttons) do
+    for _, button in pairs(self.buttons) do
         self:drawButton(button)
     end
 end

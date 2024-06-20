@@ -45,9 +45,9 @@ function Items:addOnGround(item)
 end
 
 function Items:drawGroundItems()
+    Ui:setColor(nil)
     for _, item in pairs(self.ground) do
-        Ui:setColor(nil)
-        love.graphics.draw(item.sprite, item.pos.x, item.pos.y, nil, 1, nil, 32, 32)
+        item:draw()
     end
 end
 

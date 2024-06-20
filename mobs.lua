@@ -3,7 +3,7 @@ Mobs = Class {
     spawners = {},
     graphics = {
         spawner = {
-            sprite = love.graphics.newImage('sprites/spawner.png'),
+            sprite = Sprites.spawner,
             grid = Anim8.newGrid(32, 32, 224, 32),
         }
     }

@@ -2,8 +2,8 @@ Turrets = Class {
     turrets = {},
     graphics = {
         shooter = {
-            sprite = love.graphics.newImage('sprites/shooter-turret.png'),
-            toolbarQuad = love.graphics.newQuad(0, 0, 32, 32, love.graphics.newImage('sprites/shooter-turret.png')),
+            sprite = Sprites.turrets.shooter,
+            toolbarQuad = love.graphics.newQuad(0, 0, 32, 32, Sprites.turrets.shooter),
             grid = Anim8.newGrid(32, 32, 64, 32),
         }
     }
