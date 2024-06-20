@@ -13,12 +13,12 @@ Shockwave = Class {
     completed = false
 }
 
-function Shockwave:draw(screenW, screenH, offsetX, offsetY)
+function Shockwave:draw()
     Ui:setColor(Ui.colors.white)
     love.graphics.setLineWidth(5)
-    love.graphics.circle("line", self.x + offsetX, self.y + offsetY, self.radius, 16)
+    love.graphics.circle("line", self.x, self.y, self.radius, 16)
     Ui:setColor(Ui.colors.white, 0.5)
-    love.graphics.circle("fill", self.x + offsetX, self.y + offsetY, self.radius - 1)
+    love.graphics.circle("fill", self.x, self.y, self.radius - 1)
 
     love.graphics.setLineWidth(1)
 end

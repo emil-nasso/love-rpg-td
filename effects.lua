@@ -18,14 +18,12 @@ function Effects:update(dt)
     Timer.update(dt)
 end
 
-function Effects:draw(offsetX, offsetY)
-    local screenH = love.graphics.getHeight()
-    local screenW = love.graphics.getWidth()
+function Effects:draw()
     for i, effect in ipairs(self.effects) do
         if effect.completed then
             table.remove(self.effects, i)
         else
-            effect:draw(screenW, screenH, offsetX, offsetY)
+            effect:draw()
         end
     end
 end

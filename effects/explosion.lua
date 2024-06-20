@@ -17,9 +17,9 @@ Explosion = Class {
     b = 0,
 }
 
-function Explosion:draw(screenW, screenH, offsetX, offsetY)
+function Explosion:draw()
     Ui:setColor(self, self.alpha)
-    love.graphics.circle("fill", self.x + offsetX, self.y + offsetY, self.radius)
+    love.graphics.circle("fill", self.x, self.y, self.radius)
 end
 
 return Explosion

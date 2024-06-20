@@ -125,12 +125,19 @@ function love.load()
         Player:update(dt)
     end
 
+    -- Add effects layer
+    Map:addCustomLayer("Effects", #Map.layers + 1)
+    local effectsLayer = Map.layers["Effects"]
+
+    function effectsLayer:draw()
+        Effects:draw()
+    end
+
     -- Add debug layer
     Map:addCustomLayer("Debug", #Map.layers + 1)
     local debugLayer = Map.layers["Debug"]
 
     function debugLayer:draw()
-        --local camera = Ui:getCameraPosition()
         if (Ui.showDebug) then
             Ui:drawDebug(0, 0)
 
