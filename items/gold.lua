@@ -17,10 +17,10 @@ end
 function Gold:draw(positionOverride)
     local pos = positionOverride or self.pos
 
-    Ui:setColor(Colors.black)
-    love.graphics.circle("line", pos.x, pos.y, self.amount + 1)
-    Ui:setColor(Colors.yellow)
-    love.graphics.circle("fill", pos.x, pos.y, self.amount)
+    Ui:setColor(nil)
+
+    local quad = love.graphics.newQuad((self.amount - 1) * 16, 0, 16, 16, Sprites.items.gold)
+    love.graphics.draw(Sprites.items.gold, quad, pos.x - 8, pos.y - 8)
 end
 
 return Gold

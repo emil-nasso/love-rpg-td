@@ -7,7 +7,7 @@ GoldSpawner = Class {
 }
 
 function GoldSpawner:spawn()
-    Gold(5, RandomPosInCircle(self.position, self.radius))
+    Gold(math.random(1, 10), RandomPosInCircle(self.position, self.radius))
 end
 
 return GoldSpawner
