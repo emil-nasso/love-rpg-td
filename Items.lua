@@ -9,10 +9,13 @@ function Items:update(dt)
     for _, item in pairs(self.ground) do
         local distanceToPlayer = item.pos:dist(player)
 
-        if (distanceToPlayer < 50) then
+        if (distanceToPlayer < Player.itemPickupDistance) then
             if item.autoPickup then
                 item:pickup()
             end
+        elseif (distanceToPlayer < Player.itemAttractionDistance) then
+            local directionToPlayer = player - item.pos
+            item.pos = item.pos + directionToPlayer:normalized() * Player.itemAttractionSpeed * dt
         end
     end
 end
