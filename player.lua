@@ -20,6 +20,11 @@ Player = Class {
         shape = nil,
         fixture = nil
     },
+    treasure = {
+        coal = 0,
+        ruby = 0,
+        diamond = 0,
+    },
     shootingTimerHandle = nil,
 }
 

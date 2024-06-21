@@ -29,11 +29,11 @@ function Turrets:deployTechSpawner(mousePosition)
     table.insert(self.turrets, TechSpawner(mousePosition + Ui:getCameraPosition(), 200, 1))
 end
 
-function Turrets:directionToClosestMob(turret)
-    local mob = Mobs:ClosestTo(turret.position.x, turret.position.y)
+function Turrets:directionToClosestMob(turret, maxRange)
+    local mob = Mobs:closestTo(turret.position.x, turret.position.y, maxRange)
 
     if (mob == nil) then
-        return
+        return nil
     end
 
     local direction = Vector(mob.body:getX(), mob.body:getY()) - turret.position

@@ -41,13 +41,13 @@ function Mobs:update(dt)
     end
 end
 
-function Mobs:ClosestTo(x, y)
+function Mobs:closestTo(x, y, maxRange)
     local closestMob = nil
     local closestDistance = 9999999
     for _, mob in pairs(self.mobs) do
         local mobV = Vector(mob.body:getX(), mob.body:getY())
         local distance = mobV:dist(Vector(x, y))
-        if (distance < closestDistance) then
+        if (distance < closestDistance and distance < maxRange) then
             closestDistance = distance
             closestMob = mob
         end

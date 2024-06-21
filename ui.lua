@@ -48,8 +48,8 @@ end
 function Ui:keyPressed(key)
     if key == "f" then
         love.window.setMode(
-            800,
-            600,
+            WINDOW_WIDTH,
+            WINDOW_HEIGHT,
             { resizable = false, fullscreen = not love.window.getFullscreen(), fullscreentype = "exclusive" }
         )
     end
@@ -174,6 +174,17 @@ function Ui:drawSidebar()
         320,
         140
     )
+
+    -- Treasure counts
+    Ui:setColor(nil)
+    love.graphics.draw(Sprites.items.coal, SIDEBAR_LEFT + 10, 405, nil, 2, 2)
+    love.graphics.draw(Sprites.items.ruby, SIDEBAR_LEFT + 110, 405, nil, 2, 2)
+    love.graphics.draw(Sprites.items.diamond, SIDEBAR_LEFT + 210, 405, nil, 2, 2)
+    Ui:setColor(Colors.black)
+    Ui:setBoldFont(Ui.fontSize.l)
+    love.graphics.print(Player.treasure.coal, SIDEBAR_LEFT + 45, 410)
+    love.graphics.print(Player.treasure.ruby, SIDEBAR_LEFT + 145, 410)
+    love.graphics.print(Player.treasure.diamond, SIDEBAR_LEFT + 245, 410)
 end
 
 -- Draw the fixed position parts of the debug
@@ -267,8 +278,8 @@ function Ui:drawPhysics(offsetX, offsetY)
 end
 
 function Ui:getCameraPosition()
-    local windowW = love.graphics.getWidth()
-    local windowH = love.graphics.getHeight()
+    local windowW = WORLD_WIDTH
+    local windowH = WORLD_HEIGHT
 
     local camera = Vector(math.floor(Player:getX() - windowW / 2), math.floor(Player:getY() - windowH / 2))
 

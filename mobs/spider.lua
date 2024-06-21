@@ -40,6 +40,13 @@ function Spider:hit(damage)
         Gold(math.random(1, 10), self:lootDropPosition())
         ManaOrb(math.random(1, 10), self:lootDropPosition())
         HealthOrb(math.random(1, 10), self:lootDropPosition())
+
+        local treasures = {
+            "coal", "coal", "coal", "coal", "coal",
+            "ruby", "ruby",
+            "diamond",
+        }
+        Treasure(treasures[math.random(1, #treasures)], self:lootDropPosition())
         Player:gainXp(10)
         Mobs:remove(self)
         if (self.spawner) then

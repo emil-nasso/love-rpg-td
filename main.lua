@@ -23,6 +23,7 @@ Gold = require 'items.gold'
 ManaOrb = require 'items.mana-orb'
 HealthOrb = require 'items.health-orb'
 TechOrb = require 'items.tech-orb'
+Treasure = require 'items.treasure'
 
 -- Dialogs
 LootDialog = require 'ui.loot-dialog'
