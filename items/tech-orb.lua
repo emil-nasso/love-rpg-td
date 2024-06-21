@@ -1,4 +1,4 @@
-ManaOrb = Class {
+TechOrb = Class {
     init = function(self, amount, pos)
         self.amount = amount
         self.pos = pos
@@ -7,20 +7,20 @@ ManaOrb = Class {
     autoPickup = true,
 }
 
-function ManaOrb:pickup()
-    Ui:addDebugMessage("Picking up mana orb")
+function TechOrb:pickup()
+    Ui:addDebugMessage("Picking up tech orb")
 
-    Player.mana:regenerateAmount(self.amount)
+    Player.tech:regenerateAmount(self.amount)
     Items:removeFromGround(self)
 end
 
-function ManaOrb:draw(positionOverride)
+function TechOrb:draw(positionOverride)
     local pos = positionOverride or self.pos
 
-    Ui:setColor(Colors.blue)
+    Ui:setColor(Colors.purple)
     love.graphics.circle("fill", pos.x, pos.y, self.amount)
     Ui:setColor(Colors.black)
     love.graphics.circle("line", pos.x, pos.y, self.amount)
 end
 
-return ManaOrb
+return TechOrb

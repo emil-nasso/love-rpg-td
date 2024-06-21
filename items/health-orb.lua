@@ -17,10 +17,10 @@ end
 function HealthOrb:draw(positionOverride)
     local pos = positionOverride or self.pos
 
-    Ui:setColor(Ui.colors.black)
-    love.graphics.circle("line", pos.x, pos.y, self.amount + 1)
-    Ui:setColor(Ui.colors.red)
+    Ui:setColor(Colors.red)
     love.graphics.circle("fill", pos.x, pos.y, self.amount)
+    Ui:setColor(Colors.black)
+    love.graphics.circle("line", pos.x, pos.y, self.amount)
 end
 
 return HealthOrb

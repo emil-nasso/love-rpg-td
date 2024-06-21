@@ -46,10 +46,10 @@ end
 function Npcs:draw()
     local mouse = Ui:mouseWorldPositionVector()
     for _, npc in pairs(self.npcs) do
-        Ui:setColor(Ui.colors.white)
+        Ui:setColor(Colors.white)
         love.graphics.rectangle('fill', npc.pos.x - 22, npc.pos.y - 35, 45, 14)
         Ui:setBoldFont(Ui.fontSize.s)
-        Ui:setColor(Ui.colors.black)
+        Ui:setColor(Colors.black)
         love.graphics.print(npc.name, npc.pos.x - 20, npc.pos.y - 35)
 
         Ui:setColor()

@@ -1,27 +1,49 @@
-require('helpers')
+require('utils.helpers')
+Colors = require('utils.colors')
+
+-- Assets
+Sprites = require('libraries.cargo.cargo').init('sprites')
+Font = require('libraries.cargo.cargo').init('fonts/bitstream_vera_sans')
 
 -- Libraries
 Timer = require 'libraries.hump.timer'
 Map = require('libraries.sti')('map.lua')
-Sprites = require('libraries.cargo.cargo').init('sprites')
-Font = require('libraries.cargo.cargo').init('fonts/bitstream_vera_sans')
-
--- Classes
 Class = require "libraries.hump.class"
 Anim8 = require 'libraries.anim8.anim8'
 Vector = require 'libraries.hump.vector'
+
+-- Util classes
+PlayerResource = require 'utils.player-resource'
+
+-- Mobs
 Spider = require 'mobs.spider'
+
+-- Items
 Gold = require 'items.gold'
 ManaOrb = require 'items.mana-orb'
 HealthOrb = require 'items.health-orb'
+TechOrb = require 'items.tech-orb'
+
+-- Dialogs
 LootDialog = require 'ui.loot-dialog'
 DialogueDialog = require 'ui.dialogue-dialog'
+
+-- Effects
 HeroText = require 'effects.hero-text'
 Explosion = require 'effects.explosion'
 Shockwave = require 'effects.shockwave'
+
+-- Turrets
 Shooter = require 'turrets.shooter'
+Spawner = require 'turrets.spawner'
+ResourceSpawner = require 'turrets.resource-spawner'
+GoldSpawner = require 'turrets.gold-spawner'
+HealthSpawner = require 'turrets.health-spawner'
+ManaSpawner = require 'turrets.mana-spawner'
+TechSpawner = require 'turrets.tech-spawner'
+
+-- Mob spawner
 SpiderSpawner = require 'spawners.spider-spawner'
-PlayerResource = require 'util.player-resource'
 
 -- Managers
 Player = (require 'player')()
@@ -118,7 +140,7 @@ function love.load()
     spriteLayer.draw = function(self)
         Mobs:drawSpawners()
         Items:drawGroundItems()
-        Player.anim:draw(Player.spriteSheet, Player:getX(), Player:getY(), nil, 2, nil, 6, 9)
+        Player:draw()
         Mobs:drawMobs()
         Turrets:draw()
         Npcs:draw()
@@ -195,7 +217,11 @@ function love.keypressed(key)
             end
         end
         Ui:keyPressed(key)
-        Player:keyPressed(key)
+        if (key == 'space') then
+            Player:detonateShock(Player:getX(), Player:getY())
+        elseif (key == 'q') then
+            Player:shootShotgun()
+        end
     end
 end
 
@@ -215,6 +241,26 @@ function love.mousepressed(x, y, button)
 
     if (love.keyboard.isDown('1')) then
         Turrets:deployShooter(mousePosition)
+        return
+    end
+
+    if (love.keyboard.isDown('2')) then
+        Turrets:deployGoldSpawner(mousePosition)
+        return
+    end
+
+    if (love.keyboard.isDown('3')) then
+        Turrets:deployHealthSpawner(mousePosition)
+        return
+    end
+
+    if (love.keyboard.isDown('4')) then
+        Turrets:deployManaSpawner(mousePosition)
+        return
+    end
+
+    if (love.keyboard.isDown('5')) then
+        Turrets:deployTechSpawner(mousePosition)
         return
     end
 

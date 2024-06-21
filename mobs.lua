@@ -79,11 +79,14 @@ function Mobs:drawMobs()
         mob.animation:draw(mob.spriteSheet, mob.body:getX(), mob.body:getY(), nil, 1, nil, 32, 32)
 
         if (mob.health < mob.maxHealth) then
-            Ui:setColor(Ui.colors.black)
+            Ui:setColor(Colors.black)
             love.graphics.rectangle("fill", mob.body:getX() - 20, mob.body:getY() - 25, 40, 6)
-            Ui:setColor(Ui.colors.red)
-            love.graphics.rectangle("fill", mob.body:getX() - 19, mob.body:getY() - 24, 38 * (mob.health / mob.maxHealth),
-                4)
+            Ui:setColor(Colors.red)
+            love.graphics.rectangle(
+                "fill",
+                mob.body:getX() - 19, mob.body:getY() - 24,
+                38 * (mob.health / mob.maxHealth), 4
+            )
         end
     end
 end

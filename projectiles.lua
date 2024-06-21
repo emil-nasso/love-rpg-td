@@ -24,7 +24,7 @@ function Projectiles:spawn(x, y, range, vector, angle, offset, color)
         origin = Vector(x, y),
         fixture = fixture,
         range = range,
-        color = color or Ui.colors.red
+        color = color or Colors.red
     }
     table.insert(self.projectiles, projectile)
 end

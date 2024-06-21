@@ -13,6 +13,22 @@ function Turrets:deployShooter(mousePosition)
     table.insert(self.turrets, Shooter(mousePosition + Ui:getCameraPosition()))
 end
 
+function Turrets:deployGoldSpawner(mousePosition)
+    table.insert(self.turrets, GoldSpawner(mousePosition + Ui:getCameraPosition(), 200, 1))
+end
+
+function Turrets:deployHealthSpawner(mousePosition)
+    table.insert(self.turrets, HealthSpawner(mousePosition + Ui:getCameraPosition(), 200, 1))
+end
+
+function Turrets:deployManaSpawner(mousePosition)
+    table.insert(self.turrets, ManaSpawner(mousePosition + Ui:getCameraPosition(), 200, 1))
+end
+
+function Turrets:deployTechSpawner(mousePosition)
+    table.insert(self.turrets, TechSpawner(mousePosition + Ui:getCameraPosition(), 200, 1))
+end
+
 function Turrets:directionToClosestMob(turret)
     local mob = Mobs:ClosestTo(turret.position.x, turret.position.y)
 

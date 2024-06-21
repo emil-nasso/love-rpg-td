@@ -23,6 +23,7 @@ function Shooter:update(dt)
 end
 
 function Shooter:draw()
+    Ui:setColor(nil)
     self.animation:draw(Turrets.graphics.shooter.sprite, self.position.x, self.position.y, self.direction, 1, 1, 16, 16)
 end
 

@@ -14,10 +14,10 @@ Shockwave = Class {
 }
 
 function Shockwave:draw()
-    Ui:setColor(Ui.colors.white)
+    Ui:setColor(Colors.white)
     love.graphics.setLineWidth(5)
     love.graphics.circle("line", self.x, self.y, self.radius, 16)
-    Ui:setColor(Ui.colors.white, 0.5)
+    Ui:setColor(Colors.white, 0.5)
     love.graphics.circle("fill", self.x, self.y, self.radius - 1)
 
     love.graphics.setLineWidth(1)

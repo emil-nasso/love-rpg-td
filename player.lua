@@ -112,14 +112,6 @@ function Player:gainXp(xp)
     end
 end
 
-function Player:keyPressed(key)
-    if (key == 'space') then
-        self:detonateShock(self:getX(), self:getY())
-    elseif (key == '2') then
-        self:shootShotgun()
-    end
-end
-
 function Player:detonateShock(x, y)
     if (self.mana:has(50)) then
         self.mana:use(50)
@@ -202,6 +194,11 @@ function Player:update(dt)
             Player.anim = Player.animations.up
         end
     end
+end
+
+function Player:draw()
+    Ui:setColor(nil)
+    Player.anim:draw(Player.spriteSheet, Player:getX(), Player:getY(), nil, 2, nil, 6, 9)
 end
 
 return Player

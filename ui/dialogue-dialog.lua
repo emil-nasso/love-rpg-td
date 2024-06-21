@@ -61,20 +61,20 @@ end
 
 function DialogueDialog:draw()
     -- Border
-    Ui:setColor(Ui.colors.lightGray)
+    Ui:setColor(Colors.lightGray)
     love.graphics.rectangle('fill', self:atX(-4), self:atY(-4), self.w + 8, self.h + 8, 6, 6)
     love.graphics.setLineWidth(1)
 
     -- Background
-    Ui:setColor(Ui.colors.gray)
+    Ui:setColor(Colors.gray)
     love.graphics.rectangle('fill', self:atX(0), self:atY(0), self.w, self.h)
 
     -- Title
-    Ui:setColor(Ui.colors.white)
+    Ui:setColor(Colors.white)
     Ui:setBoldFont(Ui.fontSize.l)
     love.graphics.print(self.npcName, self:atX(10), self:atY(10))
 
-    Ui:setColor(Ui.colors.white)
+    Ui:setColor(Colors.white)
     Ui:setFont(Ui.fontSize.l)
     love.graphics.print(self.text, self:atX(10), self:atY(35))
 
@@ -82,7 +82,7 @@ function DialogueDialog:draw()
 
     -- Options
 
-    Ui:setColor(Ui.colors.white)
+    Ui:setColor(Colors.white)
     Ui:setBoldFont(Ui.fontSize.l)
 
     for number, option in pairs(self.options) do

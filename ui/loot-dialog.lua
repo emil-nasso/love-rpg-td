@@ -92,28 +92,28 @@ end
 function LootDialog:draw()
     local mouseX, mouseY = love.mouse.getPosition()
     -- Border
-    Ui:setColor(Ui.colors.lightGray)
+    Ui:setColor(Colors.lightGray)
     love.graphics.rectangle('fill', self:atX(-4), self:atY(-4), self.w + 8, self.h + 8, 6, 6)
     love.graphics.setLineWidth(1)
 
     -- Background
-    Ui:setColor(Ui.colors.gray)
+    Ui:setColor(Colors.gray)
     love.graphics.rectangle('fill', self:atX(0), self:atY(0), self.w, self.h)
 
     -- Title
-    Ui:setColor(Ui.colors.white)
+    Ui:setColor(Colors.white)
     love.graphics.print("Loot", self:atX(10), self:atY(10))
 
     -- Grid
-    Ui:setColor(Ui.colors.white)
+    Ui:setColor(Colors.white)
     for col = 0, 7, 1 do
         for row = 0, 3, 1 do
             local x1, y1, x2, y2 = self:gridCoord(col, row)
             if mouseX > x1 and mouseX < x2 and mouseY > y1 and mouseY < y2 then
                 Cursors:setPointerCursor()
-                Ui:setColor(Ui.colors.lightGray)
+                Ui:setColor(Colors.lightGray)
                 love.graphics.rectangle('fill', x1, y1, x2 - x1, y2 - y1)
-                Ui:setColor(Ui.colors.white)
+                Ui:setColor(Colors.white)
             end
             love.graphics.rectangle('line', x1, y1, x2 - x1, y2 - y1)
         end
@@ -134,15 +134,15 @@ function LootDialog:draw()
 end
 
 function LootDialog:drawButton(button)
-    Ui:setColor(Ui.colors.white)
+    Ui:setColor(Colors.white)
     Ui:setFont(Ui.fontSize.l)
 
     local x, y = self:atX(button.x), self:atY(button.y)
 
     if self:buttonIsHoovered(button) then
-        Ui:setColor(Ui.colors.lightGray)
+        Ui:setColor(Colors.lightGray)
         love.graphics.rectangle('fill', x, y, button.w, button.h, 6)
-        Ui:setColor(Ui.colors.white)
+        Ui:setColor(Colors.white)
     end
 
     love.graphics.rectangle('line', x, y, button.w, button.h, 6)

@@ -15,7 +15,7 @@ function HeroText:draw()
     local screenH = love.graphics.getHeight()
     local screenW = love.graphics.getWidth()
     Ui:setBoldFont(Ui.fontSize.l)
-    Ui:setColor(Ui.colors.white, self.opacity)
+    Ui:setColor(Colors.white, self.opacity)
     love.graphics.printf(self.text, 0, screenH / 2 - 100, screenW, 'center')
 end
 
